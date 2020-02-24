@@ -2,6 +2,7 @@ import React, {useState} from 'react'
 import {View, FlatList, StyleSheet, Text} from 'react-native'
 import {FAB, Searchbar, Portal, Provider, Paragraph, Button, TextInput, Dialog} from 'react-native-paper';
 import PreviewSurvey from '../../components/PreviewSurvey'
+import Constants from 'expo-constants';
 const DATA = [
     {
       id: 'bd7acbea-c1b1-46c2-aed5-3ad53abb28ba',
@@ -16,11 +17,11 @@ const DATA = [
       title: 'Third Item',
     },
   ];
-const SurveysPage = () => {
+const SurveysPage = ({navigation}) => {
     const [open, setOpen] = useState(false)
     const [visible, setVisible] = useState(false)
     return(
-        <View style={{flex:1}}>
+        <View style={{flex:1, paddingTop:Constants.statusBarHeight}}>
             <Provider style={{backgroundColor: 'rgba(255,255,255,0.8)'}}>
             <Searchbar placeholder="Search"/>
             <FlatList style={{flex:1}}  data={DATA} renderItem={({item}) => <PreviewSurvey title={item.title}/>} keyExtractor={item =>item.id}/>
@@ -62,7 +63,10 @@ const SurveysPage = () => {
             </Dialog.Content>
             <Dialog.Actions>
             <Button onPress={() => setVisible(false)}>Cancel</Button>
-              <Button onPress={() => setVisible(false)}>Done</Button>
+              <Button onPress={() => {
+                navigation.navigate('SurveyDetail')
+                setVisible(false)
+                }}>Done</Button>
             </Dialog.Actions>
           </Dialog>
           </Portal>
