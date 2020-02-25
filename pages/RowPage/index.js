@@ -1,5 +1,5 @@
 import React, {useState} from 'react'
-import {View, StyleSheet, TouchableOpacity} from 'react-native'
+import {View, StyleSheet, TouchableOpacity, Picker} from 'react-native'
 import {TextInput, Subheading, Button, Text, Switch} from 'react-native-paper'
 import { AntDesign } from '@expo/vector-icons';
 const GeneratedInput = () => {
@@ -11,9 +11,21 @@ const GeneratedInput = () => {
 const RowPage = () => {
     
     const [answers, setAnswers] = useState([""])
+    const [multipled, setMultipled] = useState(true)
+    const [multiSelected, setMultiSelected] = useState(true)
     return (
         <View style={{flex:1, padding:10, backgroundColor: 'white'}}>
-            <Subheading style={styles.heading}>ANSWER CHOICES</Subheading>
+            <Subheading style={styles.heading}>Number of Rows</Subheading>
+            <Picker
+            selectedValue={multipled}
+            style={{height: 50, width: '100%'}}
+            onValueChange={(itemValue, itemIndex) =>
+            setMultipled(itemValue)
+            }>
+            <Picker.Item label="Multiple rows (rows labels)" value={true} />
+            <Picker.Item label="Single row (no row labels)" value={false} />
+            </Picker>
+            <Subheading style={styles.heading}>ROW LABELS</Subheading>
             {answers.map((item, index) => {
                 return (
                     <View key={index} style={{flexDirection:'row', alignItems:'center'}}>
@@ -32,6 +44,15 @@ const RowPage = () => {
                 )
             })}
             <Subheading style={styles.heading}>SETTINGS</Subheading>
+            <Picker
+            selectedValue={multiSelected}
+            style={{height: 50, width: '100%'}}
+            onValueChange={(itemValue, itemIndex) =>
+            setMultiSelected(itemValue)
+            }>
+            <Picker.Item label="Multi-select (checkboxes)" value={true} />
+            <Picker.Item label="Single-select (radio buttons)" value={false} />
+            </Picker>
             <View style={{flexDirection:'row', justifyContent:'space-between'}}>
             <Button>CANCEL</Button>
             <Button>SAVE</Button>

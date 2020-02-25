@@ -36,7 +36,7 @@ const DropdownPage = () => {
                 )
             })}
             <Subheading style={styles.heading}>SETTINGS</Subheading>
-            <View>
+            <View style={{padding:5}}>
                 <View style={{flexDirection:'row', justifyContent:'space-between'}}>
                     <Text>Add "Other" as an answer choice</Text>
                     <Switch value={other} onValueChange={() => setOther(!other)}/>

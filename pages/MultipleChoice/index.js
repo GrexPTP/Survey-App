@@ -1,5 +1,5 @@
 import React, {useState} from 'react'
-import {View, StyleSheet, TouchableOpacity} from 'react-native'
+import {View, StyleSheet, TouchableOpacity, Picker} from 'react-native'
 import {TextInput, Subheading, Button, Text, Switch} from 'react-native-paper'
 import { AntDesign } from '@expo/vector-icons';
 const GeneratedInput = () => {
@@ -12,6 +12,7 @@ const MultipleChoicePage = () => {
     const [other, setOther] = useState(false)
     const [required, setRequired] = useState(false)
     const [answers, setAnswers] = useState([""])
+    const [multiSelected, setMultiSelected] = useState(true)
     return (
         <View style={{flex:1, padding:10, backgroundColor: 'white'}}>
             <Subheading style={styles.heading}>QUESTION TEXT</Subheading>
@@ -35,7 +36,16 @@ const MultipleChoicePage = () => {
                 )
             })}
             <Subheading style={styles.heading}>SETTINGS</Subheading>
-            <View>
+            <Picker
+            selectedValue={multiSelected}
+            style={{height: 50, width: '100%'}}
+            onValueChange={(itemValue, itemIndex) =>
+            setMultiSelected(itemValue)
+            }>
+            <Picker.Item label="Multi-select (checkboxes)" value={true} />
+            <Picker.Item label="Single-select (radio buttons)" value={false} />
+            </Picker>
+            <View style={{padding:5}}>
                 <View style={{flexDirection:'row', justifyContent:'space-between'}}>
                     <Text>Add "Other" as an answer choice</Text>
                     <Switch value={other} onValueChange={() => setOther(!other)}/>

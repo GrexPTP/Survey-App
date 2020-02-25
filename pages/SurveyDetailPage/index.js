@@ -1,8 +1,10 @@
 import React, {useState} from 'react'
+import {useSelector, useDispatch} from 'react-redux'
 import {View, ScrollView, StyleSheet} from 'react-native'
 import {Card, Title, Paragraph, FAB, Portal, Provider} from 'react-native-paper'
 const SurveyDetailPage = ({navigation}) => {
     const [open, setOpen] = useState(false)
+    const {title} = useSelector(state => state.survey.current)
     return (
         <View style={{flex:1}}>
         <Provider>
@@ -57,7 +59,7 @@ const SurveyDetailPage = ({navigation}) => {
         <ScrollView style={{flex:1, padding:10}}>
         <Card>
             <Card.Content>
-                <Title>Survey Title</Title>
+                <Title>{title}</Title>
                 <Paragraph>Page Title</Paragraph>
                 <Paragraph style={{textAlign: 'center'}}>
                     You don't have any questions on this page yet

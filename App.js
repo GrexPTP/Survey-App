@@ -14,11 +14,13 @@ import MultipleChoicePage from './pages/MultipleChoice';
 import QuestionBankPage from './pages/QuestionBankPage';
 import ColumnPage from './pages/ColumnPage';
 import RowPage from './pages/RowPage';
+import {Provider} from 'react-redux'
+import store from './redux/store'
 const Stack = createStackNavigator();
 
 const App = () => {
   return (
-    
+    <Provider store={store}>
       <NavigationContainer>
       <Stack.Navigator initialRouteName={'Surveys'}>
         <Stack.Screen options={{headerShown: false}} name='Surveys' component={SurveysPage}/>
@@ -43,9 +45,10 @@ const App = () => {
         }  />
         <Stack.Screen name='Columns' component={ColumnPage} />
         <Stack.Screen name='Rows' component={RowPage} />
+        <Stack.Screen name='Questions' component={QuestionBankPage} />
       </Stack.Navigator>
       </NavigationContainer>
-    
+      </Provider>
   )
 }
 export default App

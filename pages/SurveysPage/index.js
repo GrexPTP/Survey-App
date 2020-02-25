@@ -1,6 +1,8 @@
 import React, {useState} from 'react'
+import {useDispatch} from 'react-redux'
 import {View, FlatList, StyleSheet, Text} from 'react-native'
 import {FAB, Searchbar, Portal, Provider, Paragraph, Button, TextInput, Dialog} from 'react-native-paper';
+import {createSurveyStart} from '../../redux/reducer/surveyReducer/actions'
 import PreviewSurvey from '../../components/PreviewSurvey'
 import Constants from 'expo-constants';
 const DATA = [
@@ -20,6 +22,8 @@ const DATA = [
 const SurveysPage = ({navigation}) => {
     const [open, setOpen] = useState(false)
     const [visible, setVisible] = useState(false)
+    const [title, setTitle] = useState('')
+    const dispatch = useDispatch()
     return(
         <View style={{flex:1, paddingTop:Constants.statusBarHeight}}>
             <Provider style={{backgroundColor: 'rgba(255,255,255,0.8)'}}>
@@ -57,14 +61,14 @@ const SurveysPage = ({navigation}) => {
             <Dialog.Content>
               <Paragraph style={{textAlign:'center'}}>Give your survey a title</Paragraph>
               <TextInput style={{backgroundColor:'white'}}
-        value={'Untitled'}
-        onChangeText={() => console.log('later')}
+        value={title}
+        onChangeText={text => setTitle(text)}
       />
             </Dialog.Content>
             <Dialog.Actions>
             <Button onPress={() => setVisible(false)}>Cancel</Button>
               <Button onPress={() => {
-                navigation.navigate('SurveyDetail')
+                dispatch(createSurveyStart({title, navigation}))
                 setVisible(false)
                 }}>Done</Button>
             </Dialog.Actions>
