@@ -1,40 +1,53 @@
-import React, {useState} from 'react'
+import React, {useState, useEffect} from 'react'
 import {View, StyleSheet, TouchableOpacity, Picker} from 'react-native'
 import {TextInput, Subheading, Button, Text, Switch} from 'react-native-paper'
+import {useSelector, useDispatch} from 'react-redux'
 import { AntDesign } from '@expo/vector-icons';
-const GeneratedInput = () => {
+import {createMultipleQuestionStart} from '../../redux/reducer/surveyReducer/actions'
+let answersList = ['']
+const GeneratedInput = ({index}) => {
     const [value, setValue] = useState()
     return (
-        <TextInput value={value} onChangeText={text => setValue(text)} style={{backgroundColor: 'white', width:'80%'}} placeholder={'Enter Your Text'}/>
+        <TextInput value={value} onChangeText={text =>{ 
+            answersList[index] = text
+            setValue(text)
+        }} style={{backgroundColor: 'white', width:'80%'}} placeholder={'Enter Your Text'}/>
     )
 }
-const MultipleChoicePage = () => {
+const MultipleChoicePage = ({navigation}) => {
+    const [title, setTitle] = useState('')
     const [other, setOther] = useState(false)
     const [required, setRequired] = useState(false)
-    const [answers, setAnswers] = useState([""])
+    const [answers, setAnswers] = useState([''])
     const [multiSelected, setMultiSelected] = useState(true)
+    const dispatch = useDispatch()
+    const survey = useSelector(state => state.survey.current)
+    useEffect(() => {
+        answersList = [...answers]
+    }, [])
     return (
         <View style={{flex:1, padding:10, backgroundColor: 'white'}}>
             <Subheading style={styles.heading}>QUESTION TEXT</Subheading>
-            <TextInput style={{backgroundColor: 'white'}} placeholder={'Enter Your Text'}/>
+            <TextInput value={title} onChangeText={text => setTitle(text)} style={{backgroundColor: 'white'}} placeholder={'Enter Your Text'}/>
             <Subheading style={styles.heading}>ANSWER CHOICES</Subheading>
             {answers.map((item, index) => {
                 return (
                     <View key={index} style={{flexDirection:'row', alignItems:'center'}}>
-                        <GeneratedInput key={index} answers={answers} setAnswers={setAnswers}/>
+                        <GeneratedInput index={index}/>
                         <TouchableOpacity onPress={() => {
-                            const newArr = [...answers]
-                            newArr.splice(index, 0, '')
-                            setAnswers(newArr)
+                            answersList.splice(index, 0, '')
+                            const newList = [...answersList]
+                            setAnswers(newList)
                         }}><AntDesign name="pluscircleo" size={32} color="purple" /></TouchableOpacity>
                         <TouchableOpacity disabled={answers.length < 2} onPress={() => {
-                            const newArr = [...answers]
-                            newArr.splice(index, 1)
-                            setAnswers(newArr)
+                            answersList.splice(index, 1)
+                            const newList = [...answersList]
+                            setAnswers(newList)
                             }}><AntDesign name="minuscircleo" size={32} color="purple" /></TouchableOpacity>
                     </View>
                 )
             })}
+            
             <Subheading style={styles.heading}>SETTINGS</Subheading>
             <Picker
             selectedValue={multiSelected}
@@ -56,8 +69,10 @@ const MultipleChoicePage = () => {
                 </View>
             </View>
             <View style={{flexDirection:'row', justifyContent:'space-between'}}>
-            <Button>CANCEL</Button>
-            <Button>SAVE</Button>
+            <Button onPress={() => navigation.goBack()}>CANCEL</Button>
+            <Button onPress={() => dispatch(createMultipleQuestionStart({data:{
+                title,answers: answersList,required,other,multiSelected
+            }, navigation, survey }))}>SAVE</Button>
             </View>
         </View>
     )

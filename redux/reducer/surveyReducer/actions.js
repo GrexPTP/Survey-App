@@ -35,9 +35,9 @@ export const editSurveyFailure = error => ({
     type: SurveyActionTypes.EDIT_SURVEY_FAILURE,
     payload: error
 })
-export const createParagraphQuestionStart = ({text, navigation}) => ({
+export const createParagraphQuestionStart = ({title, navigation, survey}) => ({
     type: SurveyActionTypes.CREATE_PARAGRAPH_QUESTION_START,
-    payload: {text, navigation}
+    payload: {title, navigation, survey}
 })
 export const createParagraphQuestionSuccess = survey => ({
     type: SurveyActionTypes.CREATE_PARAGRAPH_QUESTION_SUCCESS,
@@ -47,9 +47,9 @@ export const createParagraphQuestionFailure = error => ({
     type: SurveyActionTypes.CREATE_PARAGRAPH_QUESTION_FAILURE,
     payload: error
 })
-export const createImageQuestionStart = ({data, navigation}) => ({
+export const createImageQuestionStart = ({data, navigation, survey}) => ({
     type: SurveyActionTypes.CREATE_IMAGE_QUESTION_START,
-    payload: {data, navigation}
+    payload: {data, navigation, survey}
 })
 export const createImageQuestionSuccess = survey => ({
     type: SurveyActionTypes.CREATE_IMAGE_QUESTION_SUCCESS,
@@ -59,9 +59,9 @@ export const createImageQuestionFailure = error => ({
     type: SurveyActionTypes.CREATE_IMAGE_QUESTION_FAILURE,
     payload: error
 })
-export const createMatrixRatingQuestionStart = ({data, navigation}) => ({
+export const createMatrixRatingQuestionStart = ({data, navigation, survey}) => ({
     type: SurveyActionTypes.CREATE_MATRIXRATING_QUESTION_START,
-    payload: {data, navigation}
+    payload: {data, navigation, survey}
 })
 export const createMatrixRatingQuestionSuccess = survey => ({
     type: SurveyActionTypes.CREATE_MATRIXRATING_QUESTION_SUCCESS,
@@ -71,9 +71,9 @@ export const createMatrixRatingQuestionFailure = error => ({
     type: SurveyActionTypes.CREATE_MATRIXRATING_QUESTION_FAILURE,
     payload: error
 })
-export const createDropdownQuestionStart = ({data, navigation}) => ({
+export const createDropdownQuestionStart = ({data, navigation, survey}) => ({
     type: SurveyActionTypes.CREATE_DROPDOWN_QUESTION_START,
-    payload: {data,navigation}
+    payload: {data,navigation,survey}
 })
 export const createDropdownQuestionSuccess = survey => ({
     type: SurveyActionTypes.CREATE_DROPDOWN_QUESTION_SUCCESS,
@@ -83,9 +83,9 @@ export const createDropdownQuestionFailure = error => ({
     type: SurveyActionTypes.CREATE_DROPDOWN_QUESTION_FAILURE,
     payload: error
 })
-export const createTextQuestionStart = ({text, navigation}) => ({
+export const createTextQuestionStart = ({title, navigation, survey}) => ({
     type: SurveyActionTypes.CREATE_TEXT_QUESTION_START,
-    payload: {text, navigation}
+    payload: {title, navigation, survey}
 })
 export const createTextQuestionSuccess = survey => ({
     type: SurveyActionTypes.CREATE_TEXT_QUESTION_SUCCESS,
@@ -95,9 +95,9 @@ export const createTextQuestionFailure = error => ({
     type: SurveyActionTypes.CREATE_TEXT_QUESTION_FAILURE,
     payload: error
 })
-export const createMultipleQuestionStart = ({data, navigation}) => ({
+export const createMultipleQuestionStart = ({data, navigation, survey}) => ({
     type: SurveyActionTypes.CREATE_MULTIPLE_QUESTION_START,
-    payload: {data, navigation}
+    payload: {data, navigation, survey}
 })
 export const createMultipleQuestionSuccess = survey => ({
     type:SurveyActionTypes.CREATE_MULTIPLE_QUESTION_SUCCESS,

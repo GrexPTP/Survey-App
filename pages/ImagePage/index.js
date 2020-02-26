@@ -1,12 +1,18 @@
 import React, {useState, useEffect} from 'react'
 import {View, StyleSheet, TouchableOpacity, Image} from 'react-native'
+import {useSelector, useDispatch} from 'react-redux'
 import * as ImagePicker from 'expo-image-picker';
 import * as Permissions from 'expo-permissions';
 import Constants from 'expo-constants'
+import {createImageQuestionStart} from '../../redux/reducer/surveyReducer/actions'
 import {TextInput, Subheading, Button, Dialog, Portal, Paragraph, Provider, Text} from 'react-native-paper'
-const ImagePage = () => {
+const ImagePage = ({navigation}) => {
+    const dispatch = useDispatch()
     const [visible, setVisible] = useState(false)
     const [image, setImage] = useState('')
+    const [title, setTitle] = useState('')
+    const [nickname, setNickname] = useState('')
+    const survey = useSelector(state => state.survey.current)
     useEffect(() => {
         getPermissionAsync()
 
@@ -64,7 +70,7 @@ const ImagePage = () => {
         <Provider>
         <View style={{flex:1, padding:10, backgroundColor: 'white'}}>
             <Subheading style={styles.heading}>IMAGE LABEL</Subheading>
-            <TextInput style={{backgroundColor: 'white'}} placeholder={'Enter image label (optional)'}/>
+            <TextInput value={title} onChangeText={text => setTitle(text)} style={{backgroundColor: 'white'}} placeholder={'Enter image label (optional)'}/>
             <Subheading style={styles.heading}>IMAGE PREVIEW</Subheading>
             <View style={{height:210, alignItems:'center'}}>
             {image ?  <Image style={{width: 150, height: 200}} source={{uri: image}}  />  : <View></View>}
@@ -72,10 +78,10 @@ const ImagePage = () => {
             
             <Button mode="contained" onPress={() => setVisible(true)}>ADD IMAGE</Button>
             <Subheading style={styles.heading}>IMAGE NICKNAME (OPTIONAL)</Subheading>
-            <TextInput style={{backgroundColor: 'white'}} placeholder={'Enter image nickname (optional)'}/>
+            <TextInput value={nickname} onChangeText={text => setNickname(text)} style={{backgroundColor: 'white'}} placeholder={'Enter image nickname (optional)'}/>
             <View style={{flexDirection:'row', justifyContent:'space-between'}}>
-            <Button>CANCEL</Button>
-            <Button>SAVE</Button>
+            <Button onPress={() => navigation.goBack()}>CANCEL</Button>
+            <Button onPress={() => dispatch(createImageQuestionStart({data:{title,image,nickname}, navigation, survey}))}>SAVE</Button>
             </View>
             <Portal>
           <Dialog

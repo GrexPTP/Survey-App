@@ -5,20 +5,26 @@ import {TextInput, Subheading, Button, Text, Switch} from 'react-native-paper'
 const MatrixRatingPage = ({navigation}) => {
     const [other, setOther] = useState(false)
     const [required, setRequired] = useState(false)
+    const [colNum, setColNum] = useState(3)
+    const [rowNum, setRowNum] = useState(3)
     return (
         <View style={{flex:1, padding:10, backgroundColor: 'white'}}>
             <Subheading style={styles.heading}>QUESTION TEXT</Subheading>
             <TextInput style={{backgroundColor: 'white'}} placeholder={'Enter Your Text'}/>
-            <TouchableOpacity onPress={() => navigation.navigate('Rows')}>
+            <TouchableOpacity onPress={() => navigation.navigate('Rows', {
+                setRow: setRowNum
+            })}>
             <View style={{flexDirection:'row', justifyContent:'space-between', padding: 10, borderBottomColor:'black', borderBottomWidth:1}}>
                 <Text>Rows</Text>
-                <Text>3</Text>
+                <Text>{colNum}</Text>
             </View>
             </TouchableOpacity>
-            <TouchableOpacity onPress={() => navigation.navigate('Columns')}>
+            <TouchableOpacity onPress={() => navigation.navigate('Columns', {
+                setCol: setColNum
+            })}>
             <View style={{flexDirection:'row', justifyContent:'space-between', padding: 10, borderBottomColor:'black', borderBottomWidth:1}}>
                 <Text>Columns</Text>
-                <Text>3</Text>
+                <Text>{rowNum}</Text>
             </View>
             </TouchableOpacity>
             <Subheading style={styles.heading}>SETTINGS</Subheading>

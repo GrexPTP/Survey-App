@@ -2,10 +2,14 @@ import React, {useState} from 'react'
 import {View, StyleSheet, TouchableOpacity, Picker} from 'react-native'
 import {TextInput, Subheading, Button, Text, Switch} from 'react-native-paper'
 import { AntDesign } from '@expo/vector-icons';
-const GeneratedInput = () => {
+let answersList = ['']
+const GeneratedInput = ({index}) => {
     const [value, setValue] = useState()
     return (
-        <TextInput value={value} onChangeText={text => setValue(text)} style={{backgroundColor: 'white', width:'80%'}} placeholder={'Enter Your Text'}/>
+        <TextInput value={value} onChangeText={text => {
+            answersList[index] = text
+            setValue(text)
+        }} style={{backgroundColor: 'white', width:'80%'}} placeholder={'Enter Your Text'}/>
     )
 }
 const RowPage = () => {
