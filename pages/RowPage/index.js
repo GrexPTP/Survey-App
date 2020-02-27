@@ -2,21 +2,22 @@ import React, {useState} from 'react'
 import {View, StyleSheet, TouchableOpacity, Picker} from 'react-native'
 import {TextInput, Subheading, Button, Text, Switch} from 'react-native-paper'
 import { AntDesign } from '@expo/vector-icons';
-let answersList = ['']
+let rowList = ['']
 const GeneratedInput = ({index}) => {
     const [value, setValue] = useState()
     return (
         <TextInput value={value} onChangeText={text => {
-            answersList[index] = text
+            rowList[index] = text
             setValue(text)
         }} style={{backgroundColor: 'white', width:'80%'}} placeholder={'Enter Your Text'}/>
     )
 }
-const RowPage = () => {
+const RowPage = ({route,navigation}) => {
     
     const [answers, setAnswers] = useState([""])
     const [multipled, setMultipled] = useState(true)
     const [multiSelected, setMultiSelected] = useState(true)
+    const {setRow, setRowNum} = route.params
     return (
         <View style={{flex:1, padding:10, backgroundColor: 'white'}}>
             <Subheading style={styles.heading}>Number of Rows</Subheading>
@@ -33,16 +34,16 @@ const RowPage = () => {
             {answers.map((item, index) => {
                 return (
                     <View key={index} style={{flexDirection:'row', alignItems:'center'}}>
-                        <GeneratedInput key={index} answers={answers} setAnswers={setAnswers}/>
+                        <GeneratedInput index={index} key={index} answers={answers} setAnswers={setAnswers}/>
                         <TouchableOpacity onPress={() => {
-                            const newArr = [...answers]
-                            newArr.splice(index, 0, '')
-                            setAnswers(newArr)
+                            rowList.splice(index, 0, '')
+                            const newList = [...rowList]
+                            setAnswers(newList)
                         }}><AntDesign name="pluscircleo" size={32} color="purple" /></TouchableOpacity>
                         <TouchableOpacity disabled={answers.length < 2} onPress={() => {
-                            const newArr = [...answers]
-                            newArr.splice(index, 1)
-                            setAnswers(newArr)
+                            rowList.splice(index, 1)
+                            const newList = [...rowList]
+                            setAnswers(newList)
                             }}><AntDesign name="minuscircleo" size={32} color="purple" /></TouchableOpacity>
                     </View>
                 )
@@ -58,8 +59,15 @@ const RowPage = () => {
             <Picker.Item label="Single-select (radio buttons)" value={false} />
             </Picker>
             <View style={{flexDirection:'row', justifyContent:'space-between'}}>
-            <Button>CANCEL</Button>
-            <Button>SAVE</Button>
+            <Button onPress={() => {
+                navigation.goBack()
+            }}>CANCEL</Button>
+            <Button onPress={() => {
+                console.log(rowList,'asv')
+                setRow(rowList)
+                setRowNum(rowList.length)
+                navigation.goBack()
+            }}>SAVE</Button>
             </View>
         </View>
     )

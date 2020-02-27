@@ -7,24 +7,28 @@ const MatrixRatingPage = ({navigation}) => {
     const [required, setRequired] = useState(false)
     const [colNum, setColNum] = useState(3)
     const [rowNum, setRowNum] = useState(3)
+    const [col, setCol] = useState([""])
+    const [row, setRow] = useState([""])
     return (
         <View style={{flex:1, padding:10, backgroundColor: 'white'}}>
             <Subheading style={styles.heading}>QUESTION TEXT</Subheading>
             <TextInput style={{backgroundColor: 'white'}} placeholder={'Enter Your Text'}/>
             <TouchableOpacity onPress={() => navigation.navigate('Rows', {
-                setRow: setRowNum
+                setRowNum,
+                setRow
             })}>
             <View style={{flexDirection:'row', justifyContent:'space-between', padding: 10, borderBottomColor:'black', borderBottomWidth:1}}>
                 <Text>Rows</Text>
-                <Text>{colNum}</Text>
+                <Text>{rowNum}</Text>
             </View>
             </TouchableOpacity>
             <TouchableOpacity onPress={() => navigation.navigate('Columns', {
-                setCol: setColNum
+                setColNum,
+                setCol
             })}>
             <View style={{flexDirection:'row', justifyContent:'space-between', padding: 10, borderBottomColor:'black', borderBottomWidth:1}}>
                 <Text>Columns</Text>
-                <Text>{rowNum}</Text>
+                <Text>{colNum}</Text>
             </View>
             </TouchableOpacity>
             <Subheading style={styles.heading}>SETTINGS</Subheading>
@@ -39,8 +43,11 @@ const MatrixRatingPage = ({navigation}) => {
                 </View>
             </View>
             <View style={{flexDirection:'row', justifyContent:'space-between'}}>
-            <Button>CANCEL</Button>
-            <Button>SAVE</Button>
+            <Button onPress={() => navigation.goBack()}>CANCEL</Button>
+            <Button onPress={() => {
+                console.log(col, row, colNum, rowNum)
+                navigation.goBack()
+            }}>SAVE</Button>
             </View>
         </View>
     )
