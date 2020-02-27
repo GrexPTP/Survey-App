@@ -1,11 +1,11 @@
 import React, {useState} from 'react'
 import {View, Picker} from 'react-native'
 import {Title} from 'react-native-paper'
-const DropdownView = () => {
+const DropdownView = ({title, answers}) => {
     const [value, setValue] = useState(0)
     return (
         <View>
-            <Title>Title</Title>
+            <Title>{title}</Title>
             <Picker
             
             selectedValue={value}
@@ -13,8 +13,9 @@ const DropdownView = () => {
             onValueChange={(itemValue, itemIndex) =>
             setValue(itemValue)
             }>
-            <Picker.Item label="Sample 0" value={0} />
-            <Picker.Item label="Sample 1" value={1} />
+            {answers.map((item, index) => {
+                return <Picker.Item label={item} value={index} key={index} />
+            })}
             </Picker>
         </View>
     )

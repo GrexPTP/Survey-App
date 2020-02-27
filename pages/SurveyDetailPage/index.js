@@ -1,6 +1,6 @@
 import React, {useState} from 'react'
 import {useSelector, useDispatch} from 'react-redux'
-import {View, ScrollView, StyleSheet} from 'react-native'
+import {View, ScrollView, StyleSheet, Image} from 'react-native'
 import {Card, Title, Paragraph, FAB, Portal, Provider} from 'react-native-paper'
 import ParagraphView from '../../components/ParagraphView'
 import ImageView from '../../components/ImageView'
@@ -10,7 +10,7 @@ import DropdownView from '../../components/DropdownView'
 import MatrixRatingView from '../../components/MatrixRatingView'
 const SurveyDetailPage = ({navigation}) => {
     const [open, setOpen] = useState(false)
-    const {title} = useSelector(state => state.survey.current)
+    const {title, data} = useSelector(state => state.survey.current)
     return (
         <View style={{flex:1}}>
         <Provider>
@@ -67,15 +67,23 @@ const SurveyDetailPage = ({navigation}) => {
             <Card.Content>
                 <Title>{title}</Title>
                 <Paragraph>Page Title</Paragraph>
-                <Paragraph style={{textAlign: 'center'}}>
+                {data ? data.map((item, index) => {
+                  if (item.type == 'image') {
+                    return <ImageView/>
+                  } else if (item.type == 'paragraph') {
+                    return <ParagraphView title={item.title}/>
+                  } else if (item.type == 'text') {
+                    return <TextView title={item.title}/>
+                  } else if (item.type == 'multiple') {
+                    return <MultipleChoiceView title={item.title} multipled={item.multiSelected} answers={item.answers}/>
+                  } else if (item.type == 'dropdown') {
+                    return <DropdownView title={item.title} answers={item.answers}/>
+                  } else if (item.type == 'matrix') {
+                    return <MatrixRatingView title={item.title} col={item.col} row={item.row}/>
+                  }
+                }) : <Paragraph style={{textAlign: 'center'}}>
                     You don't have any questions on this page yet
-                </Paragraph>
-                <ParagraphView/>
-                <ImageView/>
-                <TextView/>
-                <MultipleChoiceView/>
-                <DropdownView/>
-                <MatrixRatingView/>
+                </Paragraph> }
             </Card.Content>
         </Card>
         </ScrollView>

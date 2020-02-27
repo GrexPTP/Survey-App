@@ -94,6 +94,7 @@ export function* createImageQuestion({payload:{data, navigation, survey}}){
         const newSur = {
             title: survey.title,
             data: [...survey.data, {
+                type: 'image',
                 title,
                 image,
                 nickname
@@ -110,6 +111,7 @@ export function* createParagraphQuestion({payload : {title, navigation, survey}}
         const newSur = yield {
             title: survey.title,
             data: [...survey.data, {
+                type: 'paragraph',
                 title,
             }]
         }
@@ -135,7 +137,8 @@ export function* createMatrixRatingQuestion({payload:{data, navigation, survey}}
         const newSur = yield {
             title: survey.title,
             data: [...survey.data, {
-                title,
+            type: 'matrix',
+            title,
             forced,
             weighted,
             multipled,
@@ -158,7 +161,7 @@ export function* createDropdownQuestion({payload:{data, navigation, survey}}){
         const newSur = yield {
             title: survey.title,
             data: [...survey.data, {
-                title,answers,required,other
+                title,answers,required,other,type:'dropdown'
             }]
         }
         yield put(createDropdownQuestionSuccess(newSur))
@@ -172,7 +175,7 @@ export function* createTextQuestion({payload:{title, navigation, survey}}){
         const newSur = yield {
             title: survey.title,
             data: [...survey.data, {
-                title,
+                title, type:'text'
             }]
         }
         yield put(createTextQuestionSuccess(newSur))
@@ -187,7 +190,7 @@ export function* createMultipleQuestion({payload:{data, navigation, survey}}){
         const newSur = yield {
             title: survey.title,
             data: [...survey.data, {
-                title,answers,required,other,multiSelected
+                title,answers,required,other,multiSelected, type:'multiple'
             }]
         }
         yield put(createMultipleQuestionSuccess(newSur))

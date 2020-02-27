@@ -1,10 +1,10 @@
 import React from 'react'
 import {View} from 'react-native'
 import {TextInput, Title} from 'react-native-paper'
-const TextView = () => {
+const TextView = ({title}) => {
     return (
         <View>
-            <Title>Title</Title>
+            <Title>{title}</Title>
             <TextInput style={{backgroundColor: 'white'}} mode='outlined' multiline={true} numberOfLines={5}/>
         </View>
     )
