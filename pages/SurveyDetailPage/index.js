@@ -2,6 +2,12 @@ import React, {useState} from 'react'
 import {useSelector, useDispatch} from 'react-redux'
 import {View, ScrollView, StyleSheet} from 'react-native'
 import {Card, Title, Paragraph, FAB, Portal, Provider} from 'react-native-paper'
+import ParagraphView from '../../components/ParagraphView'
+import ImageView from '../../components/ImageView'
+import TextView from '../../components/TextView'
+import MultipleChoiceView from '../../components/MutipleChoiceView'
+import DropdownView from '../../components/DropdownView'
+import MatrixRatingView from '../../components/MatrixRatingView'
 const SurveyDetailPage = ({navigation}) => {
     const [open, setOpen] = useState(false)
     const {title} = useSelector(state => state.survey.current)
@@ -64,6 +70,12 @@ const SurveyDetailPage = ({navigation}) => {
                 <Paragraph style={{textAlign: 'center'}}>
                     You don't have any questions on this page yet
                 </Paragraph>
+                <ParagraphView/>
+                <ImageView/>
+                <TextView/>
+                <MultipleChoiceView/>
+                <DropdownView/>
+                <MatrixRatingView/>
             </Card.Content>
         </Card>
         </ScrollView>

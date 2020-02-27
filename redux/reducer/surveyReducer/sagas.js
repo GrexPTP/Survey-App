@@ -121,10 +121,33 @@ export function* createParagraphQuestion({payload : {title, navigation, survey}}
 }
 export function* createMatrixRatingQuestion({payload:{data, navigation, survey}}){
     try {
-        const newSur = yield [...survey, {
-
-        }]
+        const {
+            title,
+            forced,
+            weighted,
+            multipled,
+            multiSelected,
+            col,
+            row,
+            other,
+            required
+        } = yield data
+        const newSur = yield {
+            title: survey.title,
+            data: [...survey.data, {
+                title,
+            forced,
+            weighted,
+            multipled,
+            multiSelected,
+            col,
+            row,
+            other,
+            required
+            }]
+        }
         yield put(createMatrixRatingQuestionSuccess(newSur))
+        yield navigation.goBack()
     } catch (error) {
         yield put(createMatrixRatingQuestionFailure(error));
     }
@@ -189,7 +212,7 @@ export function* onCreateParagraphQuestionStart(){
     yield takeLatest(SurveyActionTypes.CREATE_PARAGRAPH_QUESTION_START, createParagraphQuestion)
 }
 export function* onCreateMatrixRatingQuestionStart(){
-    yield takeLatest(SurveyActionTypes.CREATE_MATRIXRATING_QUESTION_START,createMatrixRatingQuestionStart)
+    yield takeLatest(SurveyActionTypes.CREATE_MATRIXRATING_QUESTION_START,createMatrixRatingQuestion)
 }
 export function* onCreateDropdownQuestionStart(){
     yield takeLatest(SurveyActionTypes.CREATE_DROPDOWN_QUESTION_START, createDropdownQuestion)

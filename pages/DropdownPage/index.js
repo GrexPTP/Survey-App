@@ -33,14 +33,14 @@ const DropdownPage = ({navigation}) => {
             {answers.map((item, index) => {
                 return (
                     <View key={index} style={{flexDirection:'row', alignItems:'center'}}>
-                        <GeneratedInput key={index} answers={answers} setAnswers={setAnswers}/>
+                        <GeneratedInput index={index} key={index} answers={answers} setAnswers={setAnswers}/>
                         <TouchableOpacity onPress={() => {
-                            answersList.splice(index, 0, '')
+                            answersList.push('')
                             const newList = [...answersList]
                             setAnswers(newList)
                         }}><AntDesign name="pluscircleo" size={32} color="purple" /></TouchableOpacity>
                         <TouchableOpacity disabled={answers.length < 2} onPress={() => {
-                            answersList.splice(index, 1)
+                            answersList.pop()
                             const newList = [...answersList]
                             setAnswers(newList)
                             }}><AntDesign name="minuscircleo" size={32} color="purple" /></TouchableOpacity>
@@ -60,7 +60,10 @@ const DropdownPage = ({navigation}) => {
             </View>
             <View style={{flexDirection:'row', justifyContent:'space-between'}}>
             <Button onPress={() => navigation.goBack()}>CANCEL</Button>
-            <Button onPress={() => dispatch(createDropdownQuestionStart({data:{title, answers: answersList, other, required}, navigation, survey}))}>SAVE</Button>
+            <Button onPress={() => {
+                console.log(answersList)
+                dispatch(createDropdownQuestionStart({data:{title, answers: answersList, other, required}, navigation, survey}))
+                }}>SAVE</Button>
             </View>
         </View>
     )

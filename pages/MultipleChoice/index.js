@@ -35,12 +35,12 @@ const MultipleChoicePage = ({navigation}) => {
                     <View key={index} style={{flexDirection:'row', alignItems:'center'}}>
                         <GeneratedInput index={index}/>
                         <TouchableOpacity onPress={() => {
-                            answersList.splice(index, 0, '')
+                            answersList.push('')
                             const newList = [...answersList]
                             setAnswers(newList)
                         }}><AntDesign name="pluscircleo" size={32} color="purple" /></TouchableOpacity>
                         <TouchableOpacity disabled={answers.length < 2} onPress={() => {
-                            answersList.splice(index, 1)
+                            answersList.pop()
                             const newList = [...answersList]
                             setAnswers(newList)
                             }}><AntDesign name="minuscircleo" size={32} color="purple" /></TouchableOpacity>

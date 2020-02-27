@@ -1,10 +1,11 @@
-import React, {useState} from 'react'
+import React, {useState, useEffect} from 'react'
 import {View, StyleSheet, TouchableOpacity, Picker} from 'react-native'
 import {TextInput, Subheading, Button, Text, Switch} from 'react-native-paper'
 import { AntDesign } from '@expo/vector-icons';
 let rowList = ['']
-const GeneratedInput = ({index}) => {
-    const [value, setValue] = useState()
+const GeneratedInput = ({index, defaultVal}) => {
+    const [value, setValue] = useState(defaultVal)
+    console.log(defaultVal)
     return (
         <TextInput value={value} onChangeText={text => {
             rowList[index] = text
@@ -13,11 +14,13 @@ const GeneratedInput = ({index}) => {
     )
 }
 const RowPage = ({route,navigation}) => {
-    
-    const [answers, setAnswers] = useState([""])
-    const [multipled, setMultipled] = useState(true)
-    const [multiSelected, setMultiSelected] = useState(true)
-    const {setRow, setRowNum} = route.params
+    const {setRow, setRowNum, row} = route.params
+    const [answers, setAnswers] = useState(row)
+    const [multipled, setMultipled] = useState(false)
+    const [multiSelected, setMultiSelected] = useState(false)
+    useEffect(() => {
+        rowList = row
+    }, [])
     return (
         <View style={{flex:1, padding:10, backgroundColor: 'white'}}>
             <Subheading style={styles.heading}>Number of Rows</Subheading>
@@ -33,15 +36,15 @@ const RowPage = ({route,navigation}) => {
             <Subheading style={styles.heading}>ROW LABELS</Subheading>
             {answers.map((item, index) => {
                 return (
-                    <View key={index} style={{flexDirection:'row', alignItems:'center'}}>
-                        <GeneratedInput index={index} key={index} answers={answers} setAnswers={setAnswers}/>
+                    <View  key={index} style={{flexDirection:'row', alignItems:'center'}}>
+                        <GeneratedInput defaultVal={item} index={index} key={index} answers={answers} setAnswers={setAnswers}/>
                         <TouchableOpacity onPress={() => {
-                            rowList.splice(index, 0, '')
+                            rowList.push('')
                             const newList = [...rowList]
                             setAnswers(newList)
                         }}><AntDesign name="pluscircleo" size={32} color="purple" /></TouchableOpacity>
                         <TouchableOpacity disabled={answers.length < 2} onPress={() => {
-                            rowList.splice(index, 1)
+                            rowList.pop()
                             const newList = [...rowList]
                             setAnswers(newList)
                             }}><AntDesign name="minuscircleo" size={32} color="purple" /></TouchableOpacity>
@@ -60,13 +63,15 @@ const RowPage = ({route,navigation}) => {
             </Picker>
             <View style={{flexDirection:'row', justifyContent:'space-between'}}>
             <Button onPress={() => {
-                navigation.goBack()
+                navigation.navigate('MatrixRating')
             }}>CANCEL</Button>
             <Button onPress={() => {
-                console.log(rowList,'asv')
                 setRow(rowList)
                 setRowNum(rowList.length)
-                navigation.goBack()
+                navigation.navigate('MatrixRating', {
+                    rowMultipled: multipled,
+                    rowMultiSelected: multiSelected
+                })
             }}>SAVE</Button>
             </View>
         </View>
