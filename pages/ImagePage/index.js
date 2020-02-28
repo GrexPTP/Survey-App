@@ -15,7 +15,6 @@ const ImagePage = ({navigation}) => {
     const survey = useSelector(state => state.survey.current)
     useEffect(() => {
         getPermissionAsync()
-
     }, [])
     const getPermissionAsync = async () => {
         if (Constants.platform.ios) {
@@ -34,16 +33,7 @@ const ImagePage = ({navigation}) => {
     
         
         if (!result.cancelled) {
-            setImage(result.uri)
-            console.log(result.uri)
-        //   if(type == 'profile') {
-        //     this.setState({ avaPictures: [...this.state.avaPictures,`data:image/jpeg;name=av.jpg;base64,${result.base64}`], displayAva: result.uri });
-        //   } else if (type == 'front') {
-        //     this.setState({ frontPictures: [...this.state.frontPictures,`data:image/jpeg;name=av.jpg;base64,${result.base64}`], displayFront: result.uri });
-        //   } else {
-        //     this.setState({ backPictures: [...this.state.backPictures,`data:image/jpeg;name=av.jpg;base64,${result.base64}`], displayBack: result.uri });
-        //   }
-          
+          setImage(`data:image/png;base64,${result.base64}`)
         }
       };
     
@@ -54,16 +44,7 @@ const ImagePage = ({navigation}) => {
             quality: 1
           })
           if (!result.cancelled) {
-            setImage(result.uri)
-            console.log(result.uri)
-            // if(type == 'profile') {
-            //   this.setState({ avaPictures: [...this.state.avaPictures,`data:image/jpeg;name=bla.jpg;base64,${result.base64}`], displayAva: result.uri });
-            // } else if (type == 'front') {
-            //   this.setState({ frontPictures: [...this.state.frontPictures,`data:image/jpeg;name=bla.jpg;base64,${result.base64}`], displayFront: result.uri });
-            // } else {
-            //   this.setState({ backPictures: [...this.state.backPictures,`data:image/jpeg;name=bla.jpg;base64,${result.base64}`], displayBack: result.uri });
-            // }
-            
+            setImage(`data:image/png;base64,${result.base64}`)
           }
       }
     return (
