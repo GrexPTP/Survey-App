@@ -27,7 +27,26 @@ import {
    createTextQuestionFailure,
    createMultipleQuestionStart,
    createMultipleQuestionSuccess,
-   createMultipleQuestionFailure
+   createMultipleQuestionFailure,
+    //Edit sagas
+   editImageQuestionStart,
+   editImageQuestionSuccess,
+   editImageQuestionFailure,
+   editParagraphQuestionStart,
+   editParagraphQuestionSuccess,
+   editParagraphQuestionFailure,
+   editMatrixRatingQuestionStart,
+   editMatrixRatingQuestionSuccess,
+   editMatrixRatingQuestionFailure,
+   editDropdownQuestionStart,
+   editDropdownQuestionSuccess,
+   editDropdownQuestionFailure,
+   editTextQuestionStart,
+   editTextQuestionSuccess,
+   editTextQuestionFailure,
+   editMultipleQuestionStart,
+   editMultipleQuestionSuccess,
+   editMultipleQuestionFailure
 } from './actions';
 export function* createSurvey({payload: {title, navigation}}){
     try {
@@ -88,6 +107,7 @@ export function* selectSurvey({payload }) {
         yield put(selectSurveyFailure(err))
     }
 }
+//Create sagas
 export function* createImageQuestion({payload:{data, navigation, survey}}){
     try {
         const {title, image, nickname} = data
@@ -170,12 +190,13 @@ export function* createDropdownQuestion({payload:{data, navigation, survey}}){
         yield put(createDropdownQuestionFailure(error))
     }
 }
-export function* createTextQuestion({payload:{title, navigation, survey}}){
+export function* createTextQuestion({payload:{data, navigation, survey}}){
     try {
+        const {title, required} = data
         const newSur = yield {
             title: survey.title,
             data: [...survey.data, {
-                title, type:'text'
+                title, type:'text', required
             }]
         }
         yield put(createTextQuestionSuccess(newSur))
@@ -197,6 +218,132 @@ export function* createMultipleQuestion({payload:{data, navigation, survey}}){
         yield navigation.goBack()
     } catch (error) {
         yield put(createMultipleQuestionFailure(error))
+    }
+}
+//Edit sagas
+export function* editImageQuestion({payload:{data, navigation, survey, index}}){
+    try {
+        const {title, image, nickname} = data
+        const editSurvey = [...survey.data]
+        editSurvey[index] = {
+            type: 'image',
+            title,
+            image,
+            nickname
+        }
+        const newSur = {
+            title: survey.title,
+            data: editSurvey
+        }
+        yield put(editImageQuestionSuccess(newSur))
+        yield navigation.goBack()
+    } catch (error) {
+        yield put(editImageQuestionFailure(error))
+    }
+} 
+export function* editParagraphQuestion({payload : {title, navigation, survey, index}}){
+    try {
+        const editSurvey = [...survey.data]
+        editSurvey[index] = {
+            type: 'paragraph',
+            title,
+        }
+        const newSur = yield {
+            title: survey.title,
+            data: editSurvey
+        }
+        yield put(editParagraphQuestionSuccess(newSur))
+        yield navigation.goBack()
+    } catch (error) {
+        yield put(editParagraphQuestionFailure(error))
+    }
+}
+export function* editMatrixRatingQuestion({payload:{data, navigation, survey, index}}){
+    try {
+        const {
+            title,
+            forced,
+            weighted,
+            multipled,
+            multiSelected,
+            col,
+            row,
+            other,
+            required
+        } = yield data
+
+        const editSurvey = [...survey.data]
+        editSurvey[index] = {
+            type: 'matrix',
+            title,
+            forced,
+            weighted,
+            multipled,
+            multiSelected,
+            col,
+            row,
+            other,
+            required
+            }
+        const newSur = yield {
+            title: survey.title,
+            data: editSurvey
+        }
+        yield put(editMatrixRatingQuestionSuccess(newSur))
+        yield navigation.goBack()
+    } catch (error) {
+        yield put(editMatrixRatingQuestionFailure(error));
+    }
+}
+export function* editDropdownQuestion({payload:{data, navigation, survey, index}}){
+    try {
+        const {title,answers,required,other} = data
+        const editSurvey = [...survey.data]
+        editSurvey[index] = {
+            title,answers,required,other,type:'dropdown'
+        }
+        const newSur = yield {
+            title: survey.title,
+            data: editSurvey
+        }
+        yield put(editDropdownQuestionSuccess(newSur))
+        yield navigation.goBack()
+    } catch (error) {
+        yield put(editDropdownQuestionFailure(error))
+    }
+}
+export function* editTextQuestion({payload:{data, navigation, survey, index}}){
+    try {
+        const {title, required} = data
+        const editSurvey = [...survey.data]
+        editSurvey[index] = {
+            title, type:'text', required
+        }
+        const newSur = yield {
+            title: survey.title,
+            data: editSurvey
+        }
+        yield put(editTextQuestionSuccess(newSur))
+        yield navigation.goBack()
+    } catch (error) {
+        yield put(editTextQuestionFailure(error))
+    }
+}
+export function* editMultipleQuestion({payload:{data, navigation, survey, index}}){
+    try {
+        const {title,answers,required,other,multiSelected} = data
+        const editSurvey = [...survey.data]
+        edit[index] = {
+            title,answers,required,other,multiSelected, type:'multiple'
+        }
+        const newSur = yield {
+            title: survey.title,
+            data: editSurvey
+        }
+        yield put(editMultipleQuestionSuccess(newSur))
+        yield navigation.goBack()
+    } catch (error) {
+        yield put(editMultipleQuestionFailure(error))
     }
 }
 export function* onCreateSurveyStart(){
@@ -226,6 +373,25 @@ export function* onCreateTextQuestionStart(){
 export function* onCreateMultipleQuestionStart(){
     yield takeLatest(SurveyActionTypes.CREATE_MULTIPLE_QUESTION_START, createMultipleQuestion)
 }
+//Edit start sagas
+export function* onEditImageQuestionStart() {
+    yield takeLatest(SurveyActionTypes.EDIT_IMAGE_QUESTION_START, editImageQuestion)
+}
+export function* onEditParagraphQuestionStart(){
+    yield takeLatest(SurveyActionTypes.EDIT_PARAGRAPH_QUESTION_START, editParagraphQuestion)
+}
+export function* onEditMatrixRatingQuestionStart(){
+    yield takeLatest(SurveyActionTypes.EDIT_MATRIXRATING_QUESTION_START,editMatrixRatingQuestion)
+}
+export function* onEditDropdownQuestionStart(){
+    yield takeLatest(SurveyActionTypes.EDIT_DROPDOWN_QUESTION_START, editDropdownQuestion)
+}
+export function* onEditTextQuestionStart(){
+    yield takeLatest(SurveyActionTypes.EDIT_TEXT_QUESTION_START, editTextQuestion)
+}
+export function* onEditMultipleQuestionStart(){
+    yield takeLatest(SurveyActionTypes.EDIT_MULTIPLE_QUESTION_START, editMultipleQuestion)
+}
 export function* surveySagas(){
     yield all([
         call(onCreateSurveyStart),
@@ -236,6 +402,12 @@ export function* surveySagas(){
         call(onCreateMatrixRatingQuestionStart),
         call(onCreateDropdownQuestionStart),
         call(onCreateTextQuestionStart),
-        call(onCreateMultipleQuestionStart)
+        call(onCreateMultipleQuestionStart),
+        call(onEditImageQuestionStart),
+        call(onEditParagraphQuestionStart),
+        call(onEditMatrixRatingQuestionStart),
+        call(onEditDropdownQuestionStart),
+        call(onEditTextQuestionStart),
+        call(onEditMultipleQuestionStart)
     ])
 }

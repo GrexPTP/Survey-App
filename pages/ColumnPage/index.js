@@ -13,9 +13,9 @@ const GeneratedInput = ({index, defaultVal}) => {
     )
 }
 const ColumnPage = ({route, navigation}) => {
-    const {setCol, setColNum, col} = route.params
-    const [weighted, setWeighted] = useState(false)
-    const [forced, setForced] = useState(false)
+    const {setCol, setColNum, col, colForced, colWeighted} = route.params
+    const [weighted, setWeighted] = useState(colWeighted)
+    const [forced, setForced] = useState(colForced)
     const [answers, setAnswers] = useState(col)
     
     useEffect(() => {

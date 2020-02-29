@@ -1,10 +1,15 @@
 import React from 'react'
 import {View, TouchableOpacity} from 'react-native'
 import {Paragraph} from 'react-native-paper'
-const ParagraphView = ({title}) => {
+const ParagraphView = ({title, index, navigation}) => {
     return(
         <View style={{width: '100%'}}>
-            <TouchableOpacity>
+            <TouchableOpacity onPress={() => {
+                navigation.navigate('Paragraph',{
+                    index,
+                    editable: true
+                })
+            }}>
             <Paragraph>
                 {title}
             </Paragraph>

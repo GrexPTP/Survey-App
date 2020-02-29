@@ -3,9 +3,8 @@ import {Text} from 'react-native'
 import { List } from 'react-native-paper';
 import { Ionicons } from '@expo/vector-icons';
 const PreviewSurvey = ({title}) => {
-    
     return (
-        <List.Item
+        <List.Item style={{alignItems:'center' , justifyContent:'center'}}
         title={title}
         description="Date modified"
         left={props => <Ionicons name="ios-list" size={32} color="black" />}

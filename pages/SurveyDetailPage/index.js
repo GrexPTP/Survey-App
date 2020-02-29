@@ -69,17 +69,17 @@ const SurveyDetailPage = ({navigation}) => {
                 <Paragraph>Page Title</Paragraph>
                 {data ? data.map((item, index) => {
                   if (item.type == 'image') {
-                    return <ImageView/>
+                    return <ImageView index={index} image={item.image} navigation={navigation}/>
                   } else if (item.type == 'paragraph') {
-                    return <ParagraphView title={item.title}/>
+                    return <ParagraphView title={item.title} index={index} navigation={navigation}/>
                   } else if (item.type == 'text') {
-                    return <TextView title={item.title}/>
+                    return <TextView title={item.title} required={item.required} index={index} navigation={navigation} />
                   } else if (item.type == 'multiple') {
-                    return <MultipleChoiceView title={item.title} multipled={item.multiSelected} answers={item.answers}/>
+                    return <MultipleChoiceView title={item.title} multipled={item.multiSelected} answers={item.answers} required={item.required} other={item.other} index={index} navigation={navigation} />
                   } else if (item.type == 'dropdown') {
-                    return <DropdownView title={item.title} answers={item.answers}/>
+                    return <DropdownView title={item.title} answers={item.answers} required={item.required} other={item.other} index={index} navigation={navigation}/>
                   } else if (item.type == 'matrix') {
-                    return <MatrixRatingView title={item.title} col={item.col} row={item.row}/>
+                    return <MatrixRatingView title={item.title} col={item.col} row={item.row} required={item.required} other={item.other} multiSelected={item.multiSelected} index={index} navigation={navigation}/>
                   }
                 }) : <Paragraph style={{textAlign: 'center'}}>
                     You don't have any questions on this page yet

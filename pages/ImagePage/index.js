@@ -4,15 +4,18 @@ import {useSelector, useDispatch} from 'react-redux'
 import * as ImagePicker from 'expo-image-picker';
 import * as Permissions from 'expo-permissions';
 import Constants from 'expo-constants'
-import {createImageQuestionStart} from '../../redux/reducer/surveyReducer/actions'
+import {createImageQuestionStart, editImageQuestionStart} from '../../redux/reducer/surveyReducer/actions'
 import {TextInput, Subheading, Button, Dialog, Portal, Paragraph, Provider, Text} from 'react-native-paper'
-const ImagePage = ({navigation}) => {
+const ImagePage = ({navigation, route}) => {
     const dispatch = useDispatch()
-    const [visible, setVisible] = useState(false)
-    const [image, setImage] = useState('')
-    const [title, setTitle] = useState('')
-    const [nickname, setNickname] = useState('')
     const survey = useSelector(state => state.survey.current)
+    const currentSelect = route.params ? survey.data[route.params.index] : null
+    const [visible, setVisible] = useState(false)
+    const [image, setImage] = useState(currentSelect ? currentSelect.image : '')
+    const [title, setTitle] = useState(currentSelect ? currentSelect.title : '')
+    const [nickname, setNickname] = useState(currentSelect ? currentSelect.nickname : '')
+    const editable = currentSelect ? true : false
+    
     useEffect(() => {
         getPermissionAsync()
     }, [])
@@ -62,7 +65,13 @@ const ImagePage = ({navigation}) => {
             <TextInput value={nickname} onChangeText={text => setNickname(text)} style={{backgroundColor: 'white'}} placeholder={'Enter image nickname (optional)'}/>
             <View style={{flexDirection:'row', justifyContent:'space-between'}}>
             <Button onPress={() => navigation.goBack()}>CANCEL</Button>
-            <Button onPress={() => dispatch(createImageQuestionStart({data:{title,image,nickname}, navigation, survey}))}>SAVE</Button>
+            <Button onPress={() => {
+              if (editable) {
+                dispatch(editImageQuestionStart({data:{title,image,nickname}, navigation, survey, index:route.params.index}))
+              } else {
+                dispatch(createImageQuestionStart({data:{title,image,nickname}, navigation, survey}))
+              }
+            } }>SAVE</Button>
             </View>
             <Portal>
           <Dialog

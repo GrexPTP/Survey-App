@@ -2,18 +2,21 @@ import React, {useState} from 'react'
 import {View, StyleSheet, TouchableOpacity} from 'react-native'
 import {TextInput, Subheading, Button, Text, Switch} from 'react-native-paper'
 import {useSelector, useDispatch} from 'react-redux'
-import {createMatrixRatingQuestionStart} from '../../redux/reducer/surveyReducer/actions'
+import {createMatrixRatingQuestionStart, editMatrixRatingQuestionStart} from '../../redux/reducer/surveyReducer/actions'
 
 const MatrixRatingPage = ({route, navigation}) => {
-    const [other, setOther] = useState(false)
-    const [required, setRequired] = useState(false)
-    const [colNum, setColNum] = useState(1)
-    const [rowNum, setRowNum] = useState(1)
-    const [col, setCol] = useState([""])
-    const [row, setRow] = useState([""])
-    const [title, setTitle] = useState('')
     const survey = useSelector(state => state.survey.current)
+    const currentSelect = route.params ? survey.data[route.params.index] : null
+    const [other, setOther] = useState(currentSelect ? currentSelect.other : false)
+    const [required, setRequired] = useState(currentSelect ? currentSelect.required : false)
+    const [colNum, setColNum] = useState(currentSelect ? currentSelect.col.length: 1)
+    const [rowNum, setRowNum] = useState(currentSelect ? currentSelect.row.length : 1)
+    const [col, setCol] = useState(currentSelect ? currentSelect.col : [""])
+    const [row, setRow] = useState(currentSelect ? currentSelect.row :[""])
+    const [title, setTitle] = useState(currentSelect ? currentSelect.title : '')
+    const [saved, setSaved] = useState(false)
     const dispatch = useDispatch()
+    const editable = currentSelect ? true : false
     let {colForced, colWeighted, rowMultipled, rowMultiSelected} = {colForced:false, colWeighted:false, rowMultipled:false, rowMultiSelected:false}
     if (route.params) {
         if (route.params.colForced) {
@@ -38,10 +41,15 @@ const MatrixRatingPage = ({route, navigation}) => {
         <View style={{flex:1, padding:10, backgroundColor: 'white'}}>
             <Subheading style={styles.heading}>QUESTION TEXT</Subheading>
             <TextInput value={title} onChangeText={text => setTitle(text)} style={{backgroundColor: 'white'}} placeholder={'Enter Your Text'}/>
+            {
+                title.trim() === '' && saved && <Text style={styles.error}>This field cannot be empty!</Text>
+            }
             <TouchableOpacity onPress={() => navigation.navigate('Rows', {
                 setRowNum,
                 setRow,
-                row
+                row,
+                rowMultipled,
+                rowMultiSelected
             })}>
             <View style={{flexDirection:'row', justifyContent:'space-between', padding: 10, borderBottomColor:'black', borderBottomWidth:1}}>
                 <Text>Rows</Text>
@@ -51,7 +59,9 @@ const MatrixRatingPage = ({route, navigation}) => {
             <TouchableOpacity onPress={() => navigation.navigate('Columns', {
                 setColNum,
                 setCol,
-                col
+                col,
+                colForced,
+                colWeighted
             })}>
             <View style={{flexDirection:'row', justifyContent:'space-between', padding: 10, borderBottomColor:'black', borderBottomWidth:1}}>
                 <Text>Columns</Text>
@@ -72,18 +82,29 @@ const MatrixRatingPage = ({route, navigation}) => {
             <View style={{flexDirection:'row', justifyContent:'space-between'}}>
             <Button onPress={() => navigation.goBack()}>CANCEL</Button>
             <Button onPress={() => {
-                const data = {
-                    title,
-                    forced,
-                    weighted,
-                    multipled,
-                    multiSelected,
-                    col,
-                    row,
-                    other,
-                    required
+                if (title.trim() !== '') {
+                    const data = {
+                        title,
+                        forced,
+                        weighted,
+                        multipled,
+                        multiSelected,
+                        col,
+                        row,
+                        other,
+                        required,
+                    }
+                    if (editable) {
+                       dispatch(editMatrixRatingQuestionStart({data, navigation, survey, index:route.params.index}))
+                    } else {
+                        dispatch(createMatrixRatingQuestionStart({data, navigation, survey}))
+                    }
+                    
+                    
+                } else {
+                    setSaved(true)
                 }
-                dispatch(createMatrixRatingQuestionStart({data, navigation, survey}))
+                
                 
             }}>SAVE</Button>
             </View>
@@ -94,6 +115,10 @@ const styles = StyleSheet.create({
     heading: {
         fontSize:12,
         color: 'purple'
+    },
+    error:{
+        color: 'red',
+        padding:5
     }
 })
 export default MatrixRatingPage

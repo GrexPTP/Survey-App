@@ -3,10 +3,10 @@ import {View, StyleSheet, TouchableOpacity, Picker} from 'react-native'
 import {TextInput, Subheading, Button, Text, Switch} from 'react-native-paper'
 import {useSelector, useDispatch} from 'react-redux'
 import { AntDesign } from '@expo/vector-icons';
-import {createMultipleQuestionStart} from '../../redux/reducer/surveyReducer/actions'
+import {createMultipleQuestionStart, editMultipleQuestionStart} from '../../redux/reducer/surveyReducer/actions'
 let answersList = ['']
-const GeneratedInput = ({index}) => {
-    const [value, setValue] = useState()
+const GeneratedInput = ({index, item}) => {
+    const [value, setValue] = useState(item)
     return (
         <TextInput value={value} onChangeText={text =>{ 
             answersList[index] = text
@@ -14,14 +14,18 @@ const GeneratedInput = ({index}) => {
         }} style={{backgroundColor: 'white', width:'80%'}} placeholder={'Enter Your Text'}/>
     )
 }
-const MultipleChoicePage = ({navigation}) => {
-    const [title, setTitle] = useState('')
-    const [other, setOther] = useState(false)
-    const [required, setRequired] = useState(false)
-    const [answers, setAnswers] = useState([''])
-    const [multiSelected, setMultiSelected] = useState(true)
-    const dispatch = useDispatch()
+const MultipleChoicePage = ({navigation,route}) => {
     const survey = useSelector(state => state.survey.current)
+    const currentSelect = route.params ? survey.data[route.params.index] : null
+    const [title, setTitle] = useState(currentSelect ? currentSelect.title : '')
+    const [other, setOther] = useState(currentSelect ? currentSelect.other : false)
+    const [required, setRequired] = useState(currentSelect ? currentSelect.required : false)
+    const [answers, setAnswers] = useState(currentSelect ? currentSelect.answers : [''])
+    const [multiSelected, setMultiSelected] = useState(currentSelect ? currentSelect.multiSelected :true)
+    const [saved, setSaved] = useState(false)
+    const dispatch = useDispatch()
+    const editable = currentSelect ? true : false
+    
     useEffect(() => {
         answersList = [...answers]
     }, [])
@@ -29,11 +33,14 @@ const MultipleChoicePage = ({navigation}) => {
         <View style={{flex:1, padding:10, backgroundColor: 'white'}}>
             <Subheading style={styles.heading}>QUESTION TEXT</Subheading>
             <TextInput value={title} onChangeText={text => setTitle(text)} style={{backgroundColor: 'white'}} placeholder={'Enter Your Text'}/>
+            {
+                title.trim() === '' && saved && <Text style={styles.error}>This field cannot be empty!</Text>
+            }
             <Subheading style={styles.heading}>ANSWER CHOICES</Subheading>
             {answers.map((item, index) => {
                 return (
                     <View key={index} style={{flexDirection:'row', alignItems:'center'}}>
-                        <GeneratedInput index={index}/>
+                        <GeneratedInput index={index} item={item}/>
                         <TouchableOpacity onPress={() => {
                             answersList.push('')
                             const newList = [...answersList]
@@ -70,9 +77,28 @@ const MultipleChoicePage = ({navigation}) => {
             </View>
             <View style={{flexDirection:'row', justifyContent:'space-between'}}>
             <Button onPress={() => navigation.goBack()}>CANCEL</Button>
-            <Button onPress={() => dispatch(createMultipleQuestionStart({data:{
-                title,answers: answersList,required,other,multiSelected
-            }, navigation, survey }))}>SAVE</Button>
+            <Button onPress={() => {
+                let tempAns = answersList
+                if (other) {
+                    tempAns = [...answersList,'Other']
+                }
+                if (title.trim() !== ''){
+                    if (editable) {
+                        dispatch(editMultipleQuestionStart({data:{
+                            title,answers: tempAns,required,other,multiSelected
+                        }, navigation, survey, index:route.params.index }))
+                    } else {
+                        dispatch(createMultipleQuestionStart({data:{
+                        title,answers: tempAns,required,other,multiSelected
+                    }, navigation, survey }))
+                    }
+                    
+                } else {
+                    setSaved(true)
+                }
+                
+        }
+            }>SAVE</Button>
             </View>
         </View>
     )
@@ -81,6 +107,10 @@ const styles = StyleSheet.create({
     heading: {
         fontSize:12,
         color: 'purple'
+    },
+    error:{
+        color: 'red',
+        padding:5
     }
 })
 export default MultipleChoicePage

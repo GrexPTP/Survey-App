@@ -14,10 +14,11 @@ const GeneratedInput = ({index, defaultVal}) => {
     )
 }
 const RowPage = ({route,navigation}) => {
-    const {setRow, setRowNum, row} = route.params
+    const {setRow, setRowNum, row, rowMultipled,rowMultiSelected } = route.params
     const [answers, setAnswers] = useState(row)
-    const [multipled, setMultipled] = useState(false)
-    const [multiSelected, setMultiSelected] = useState(false)
+    const [multipled, setMultipled] = useState(rowMultipled)
+    const [multiSelected, setMultiSelected] = useState(rowMultiSelected)
+    
     useEffect(() => {
         rowList = row
     }, [])
@@ -28,49 +29,64 @@ const RowPage = ({route,navigation}) => {
             selectedValue={multipled}
             style={{height: 50, width: '100%'}}
             onValueChange={(itemValue, itemIndex) =>
-            setMultipled(itemValue)
+            {   setMultipled(itemValue)
+                }
             }>
             <Picker.Item label="Multiple rows (rows labels)" value={true} />
             <Picker.Item label="Single row (no row labels)" value={false} />
             </Picker>
-            <Subheading style={styles.heading}>ROW LABELS</Subheading>
-            {answers.map((item, index) => {
-                return (
-                    <View  key={index} style={{flexDirection:'row', alignItems:'center'}}>
-                        <GeneratedInput defaultVal={item} index={index} key={index} answers={answers} setAnswers={setAnswers}/>
-                        <TouchableOpacity onPress={() => {
-                            rowList.push('')
-                            const newList = [...rowList]
-                            setAnswers(newList)
-                        }}><AntDesign name="pluscircleo" size={32} color="purple" /></TouchableOpacity>
-                        <TouchableOpacity disabled={answers.length < 2} onPress={() => {
-                            rowList.pop()
-                            const newList = [...rowList]
-                            setAnswers(newList)
-                            }}><AntDesign name="minuscircleo" size={32} color="purple" /></TouchableOpacity>
-                    </View>
-                )
-            })}
+            {multipled &&
+            <View> 
+                <Subheading style={styles.heading}>ROW LABELS</Subheading>
+                {answers.map((item, index) => {
+                    return (
+                        <View key={index} style={{flexDirection:'row', alignItems:'center'}}>
+                            <GeneratedInput defaultVal={item} index={index} key={index} answers={answers} setAnswers={setAnswers}/>
+                            <TouchableOpacity onPress={() => {
+                                rowList.push('')
+                                const newList = [...rowList]
+                                setAnswers(newList)
+                            }}><AntDesign name="pluscircleo" size={32} color="purple" /></TouchableOpacity>
+                            <TouchableOpacity disabled={answers.length < 2} onPress={() => {
+                                rowList.pop()
+                                const newList = [...rowList]
+                                setAnswers(newList)
+                                }}><AntDesign name="minuscircleo" size={32} color="purple" /></TouchableOpacity>
+                        </View>
+                    )
+                })}
+                </View>
+                
+            }
             <Subheading style={styles.heading}>SETTINGS</Subheading>
-            <Picker
-            selectedValue={multiSelected}
-            style={{height: 50, width: '100%'}}
-            onValueChange={(itemValue, itemIndex) =>
-            setMultiSelected(itemValue)
-            }>
-            <Picker.Item label="Multi-select (checkboxes)" value={true} />
-            <Picker.Item label="Single-select (radio buttons)" value={false} />
-            </Picker>
+                <Picker
+                selectedValue={multiSelected}
+                style={{height: 50, width: '100%'}}
+                onValueChange={(itemValue, itemIndex) =>
+                {
+                    setMultiSelected(itemValue)     
+                    console.log(itemValue, multiSelected)           
+                }
+                }>
+                <Picker.Item label="Multi-select (checkboxes)" value={true} />
+                <Picker.Item label="Single-select (radio buttons)" value={false} />
+                </Picker>
             <View style={{flexDirection:'row', justifyContent:'space-between'}}>
             <Button onPress={() => {
                 navigation.navigate('MatrixRating')
             }}>CANCEL</Button>
             <Button onPress={() => {
-                setRow(rowList)
-                setRowNum(rowList.length)
+                if(!multipled) {
+                    setRow(['     '])
+                    setRowNum(1)
+                } else {
+                    setRow(rowList)
+                    setRowNum(rowList.length)
+                }
+                
                 navigation.navigate('MatrixRating', {
-                    rowMultipled: multipled,
-                    rowMultiSelected: multiSelected
+                    rowMultipled: !multipled,
+                    rowMultiSelected: !multiSelected
                 })
             }}>SAVE</Button>
             </View>
