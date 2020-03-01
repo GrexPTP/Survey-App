@@ -11,9 +11,9 @@ export const createSurveyFailure = error => ({
     type: SurveyActionTypes.CREATE_SURVEY_FAILURE,
     payload: error
 })
-export const selectSurveyStart = id => ({
+export const selectSurveyStart = ({id, navigation}) => ({
     type: SurveyActionTypes.SELECT_SURVEY_START,
-    payload: id
+    payload: {id, navigation}
 })
 export const selectSurveySuccess = survey => ({
     type: SurveyActionTypes.SELECT_SURVEY_SUCCESS,

@@ -1,3 +1,4 @@
+import axios from 'axios'
 import { takeLatest, put, all, call } from 'redux-saga/effects';
 import SurveyActionTypes from './types';
 import {
@@ -50,59 +51,62 @@ import {
 } from './actions';
 export function* createSurvey({payload: {title, navigation}}){
     try {
-        // const response = yield fetch(`http://tkb.miennam24h.vn/api/login`,{
-        //     method: 'post',
-        //     headers: {
-        //       'Accept': 'application/json',
-        //       'Content-Type': 'application/json'
-        //     },
-        //     body:JSON.stringify({
-        //         email: data.email,
-        //         password: data.password
-        //     })
-        //   })
-          //const result = yield response.json()
-          const result = yield {
-            title,
-            data: []
-          }
-          
-          yield console.log(result)
-          yield put(createSurveySuccess(result))
-          yield navigation.navigate('SurveyDetail')
+        const response = yield axios({
+            method: 'post',
+            url: 'http://tkb.miennam24h.vn/api/create_survey',
+            headers: {
+              'Accept': 'application/json',
+              'Content-Type': 'application/json'
+            },
+            data: {
+                title
+            }
+        })
+        const result = yield response.data
+        yield put(createSurveySuccess(result.success))
+        yield navigation.navigate('SurveyDetail')
     } catch (err) {
         yield put(createSurveyFailure(err))
     }
 }
 export function* editSurvey({payload}){
     try {
-        yield put(editSurveySuccess({}))
+        const response = yield axios({
+            method: 'post',
+            url: 'http://tkb.miennam24h.vn/api/load_surveys',
+            headers: {
+              'Accept': 'application/json',
+              'Content-Type': 'application/json'
+            },
+            data: {
+                id: payload
+            }
+        })
+        const result = yield response.data
+        const surveys = yield result.success
+        yield put(editSurveySuccess(surveys))
     } catch (err) {
         yield put(editSurveyFailure(err))
     }
 }
-export function* selectSurvey({payload }) {
+export function* selectSurvey({payload: {id, navigation}}) {
     try {
-        const {name} = payload
-        // const response = yield fetch(`http://tkb.miennam24h.vn/api/signup`,{
-        //   method: 'post',
-        //   headers: {
-        //     'Accept': 'application/json',
-        //     'Content-Type': 'application/json'
-        //   },
-        //   body:JSON.stringify({
-        //       name,
-        //       email,
-        //       password,
-        //       c_password: password,
-        //       phone,
-        //       id_number: IDNumber,
-        //       role_id
-        //   })
-        // })
-        // const result =  yield response.json()
-        const result = yield {name}
-        yield put(selectSurveySuccess(result))
+        const response = yield axios({
+            method: 'post',
+            url: 'http://tkb.miennam24h.vn/api/load_survey',
+            headers: {
+              'Accept': 'application/json',
+              'Content-Type': 'application/json'
+            },
+            data: {
+                id
+            }
+        })
+        const result = yield response.data
+        const survey = result.success
+        survey.data = JSON.parse(survey.data)
+        yield put(selectSurveySuccess(survey))
+        yield navigation.navigate('SurveyDetail')
     } catch(err) {
         yield put(selectSurveyFailure(err))
     }
@@ -111,15 +115,29 @@ export function* selectSurvey({payload }) {
 export function* createImageQuestion({payload:{data, navigation, survey}}){
     try {
         const {title, image, nickname} = data
-        const newSur = {
-            title: survey.title,
-            data: [...survey.data, {
-                type: 'image',
-                title,
-                image,
-                nickname
-            }]
-        }
+
+        const response = yield axios({
+            method: 'post',
+            url: 'http://tkb.miennam24h.vn/api/edit_survey',
+            headers: {
+              'Accept': 'application/json',
+              'Content-Type': 'application/json'
+            },
+            data: {
+                id: survey.id,
+                title: survey.title,
+                page_title: survey.page_title ? survey.page_title : '',
+                data: JSON.stringify([...survey.data, {
+                    type: 'image',
+                    title,
+                    image,
+                    nickname
+                }])
+            }
+        })
+        const result = yield response.data
+        const newSur = yield result.success
+        newSur.data = JSON.parse(newSur.data)
         yield put(createImageQuestionSuccess(newSur))
         yield navigation.goBack()
     } catch (error) {
@@ -128,13 +146,31 @@ export function* createImageQuestion({payload:{data, navigation, survey}}){
 } 
 export function* createParagraphQuestion({payload : {title, navigation, survey}}){
     try {
-        const newSur = yield {
-            title: survey.title,
-            data: [...survey.data, {
-                type: 'paragraph',
-                title,
-            }]
-        }
+
+    
+        const response = yield axios({
+            method: 'post',
+            url: 'http://tkb.miennam24h.vn/api/edit_survey',
+            headers: {
+              'Accept': 'application/json',
+              'Content-Type': 'application/json'
+            },
+            data: {
+                id: survey.id,
+                title: survey.title,
+                page_title: survey.page_title ? survey.page_title : 'Page title',
+                data: JSON.stringify([...survey.data, {
+                    type: 'paragraph',
+                    title,
+                }])
+            }
+        }).catch(err => {
+            console.log(err)
+        })
+        yield console.log(response)
+        const result = yield response.data
+        const newSur = yield result.success
+        newSur.data = JSON.parse(newSur.data) 
         yield put(createParagraphQuestionSuccess(newSur))
         yield navigation.goBack()
     } catch (error) {
@@ -154,21 +190,34 @@ export function* createMatrixRatingQuestion({payload:{data, navigation, survey}}
             other,
             required
         } = yield data
-        const newSur = yield {
-            title: survey.title,
-            data: [...survey.data, {
-            type: 'matrix',
-            title,
-            forced,
-            weighted,
-            multipled,
-            multiSelected,
-            col,
-            row,
-            other,
-            required
-            }]
-        }
+        const response = yield axios({
+            method: 'post',
+            url: 'http://tkb.miennam24h.vn/api/edit_survey',
+            headers: {
+              'Accept': 'application/json',
+              'Content-Type': 'application/json'
+            },
+            data: {
+                id: survey.id,
+                title: survey.title,
+                page_title: survey.page_title ? survey.page_title : 'Page title' ,
+                data: JSON.stringify([...survey.data, {
+                    type: 'matrix',
+                    title,
+                    forced,
+                    weighted,
+                    multipled,
+                    multiSelected,
+                    col,
+                    row,
+                    other,
+                    required
+                    }])
+            }
+        })
+        const result = yield response.data
+        const newSur = yield result.success
+        newSur.data = JSON.parse(newSur.data)         
         yield put(createMatrixRatingQuestionSuccess(newSur))
         yield navigation.goBack()
     } catch (error) {
@@ -178,12 +227,25 @@ export function* createMatrixRatingQuestion({payload:{data, navigation, survey}}
 export function* createDropdownQuestion({payload:{data, navigation, survey}}){
     try {
         const {title,answers,required,other} = data
-        const newSur = yield {
-            title: survey.title,
-            data: [...survey.data, {
-                title,answers,required,other,type:'dropdown'
-            }]
-        }
+        const response = yield axios({
+            method: 'post',
+            url: 'http://tkb.miennam24h.vn/api/edit_survey',
+            headers: {
+              'Accept': 'application/json',
+              'Content-Type': 'application/json'
+            },
+            data: {
+                id: survey.id,
+                title: survey.title,
+                page_title: survey.page_title ? survey.page_title : 'Page title',
+                data: JSON.stringify([...survey.data, {
+                    title,answers,required,other,type:'dropdown'
+                }])
+            }
+        })
+        const result = yield response.data
+        const newSur = yield result.success
+        newSur.data = JSON.parse(newSur.data) 
         yield put(createDropdownQuestionSuccess(newSur))
         yield navigation.goBack()
     } catch (error) {
@@ -193,12 +255,25 @@ export function* createDropdownQuestion({payload:{data, navigation, survey}}){
 export function* createTextQuestion({payload:{data, navigation, survey}}){
     try {
         const {title, required} = data
-        const newSur = yield {
-            title: survey.title,
-            data: [...survey.data, {
-                title, type:'text', required
-            }]
-        }
+        const response = yield axios({
+            method: 'post',
+            url: 'http://tkb.miennam24h.vn/api/edit_survey',
+            headers: {
+              'Accept': 'application/json',
+              'Content-Type': 'application/json'
+            },
+            data: {
+                id: survey.id,
+                title: survey.title,
+                page_title: survey.page_title ? survey.page_title : 'Page title',
+                data: JSON.stringify([...survey.data, {
+                    title, type:'text', required
+                }])
+            }
+        })
+        const result = yield response.data
+        const newSur = yield result.success
+        newSur.data = JSON.parse(newSur.data) 
         yield put(createTextQuestionSuccess(newSur))
         yield navigation.goBack()
     } catch (error) {
@@ -208,12 +283,25 @@ export function* createTextQuestion({payload:{data, navigation, survey}}){
 export function* createMultipleQuestion({payload:{data, navigation, survey}}){
     try {
         const {title,answers,required,other,multiSelected} = data
-        const newSur = yield {
-            title: survey.title,
-            data: [...survey.data, {
-                title,answers,required,other,multiSelected, type:'multiple'
-            }]
-        }
+        const response = yield axios({
+            method: 'post',
+            url: 'http://tkb.miennam24h.vn/api/edit_survey',
+            headers: {
+              'Accept': 'application/json',
+              'Content-Type': 'application/json'
+            },
+            data: {
+                id: survey.id,
+                title: survey.title,
+                page_title: survey.page_title ? survey.page_title : 'Page title',
+                data: JSON.stringify([...survey.data, {
+                    title,answers,required,other,multiSelected, type:'multiple'
+                }])
+            }
+        })
+        const result = yield response.data
+        const newSur = yield result.success
+        newSur.data = JSON.parse(newSur.data) 
         yield put(createMultipleQuestionSuccess(newSur))
         yield navigation.goBack()
     } catch (error) {
@@ -231,10 +319,23 @@ export function* editImageQuestion({payload:{data, navigation, survey, index}}){
             image,
             nickname
         }
-        const newSur = {
-            title: survey.title,
-            data: editSurvey
-        }
+        const response = yield axios({
+            method: 'post',
+            url: 'http://tkb.miennam24h.vn/api/edit_survey',
+            headers: {
+              'Accept': 'application/json',
+              'Content-Type': 'application/json'
+            },
+            data: {
+                id: survey.id,
+                title: survey.title,
+                page_title: survey.page_title ? survey.page_title : 'Page title',
+                data: JSON.stringify(editSurvey)
+            }
+        })
+        const result = yield response.data
+        const newSur = yield result.success
+        newSur.data = JSON.parse(newSur.data) 
         yield put(editImageQuestionSuccess(newSur))
         yield navigation.goBack()
     } catch (error) {
@@ -248,10 +349,23 @@ export function* editParagraphQuestion({payload : {title, navigation, survey, in
             type: 'paragraph',
             title,
         }
-        const newSur = yield {
-            title: survey.title,
-            data: editSurvey
-        }
+        const response = yield axios({
+            method: 'post',
+            url: 'http://tkb.miennam24h.vn/api/edit_survey',
+            headers: {
+              'Accept': 'application/json',
+              'Content-Type': 'application/json'
+            },
+            data: {
+                id: survey.id,
+                title: survey.title,
+                page_title: survey.page_title ? survey.page_title : 'Page title',
+                data: JSON.stringify(editSurvey)
+            }
+        })
+        const result = yield response.data
+        const newSur = yield result.success
+        newSur.data = JSON.parse(newSur.data) 
         yield put(editParagraphQuestionSuccess(newSur))
         yield navigation.goBack()
     } catch (error) {
@@ -285,10 +399,23 @@ export function* editMatrixRatingQuestion({payload:{data, navigation, survey, in
             other,
             required
             }
-        const newSur = yield {
-            title: survey.title,
-            data: editSurvey
-        }
+            const response = yield axios({
+                method: 'post',
+                url: 'http://tkb.miennam24h.vn/api/edit_survey',
+                headers: {
+                  'Accept': 'application/json',
+                  'Content-Type': 'application/json'
+                },
+                data: {
+                    id: survey.id,
+                    title: survey.title,
+                    page_title: survey.page_title ? survey.page_title : 'Page title',
+                    data: JSON.stringify(editSurvey)
+                }
+            })
+            const result = yield response.data
+            const newSur = yield result.success
+            newSur.data = JSON.parse(newSur.data) 
         yield put(editMatrixRatingQuestionSuccess(newSur))
         yield navigation.goBack()
     } catch (error) {
@@ -302,10 +429,23 @@ export function* editDropdownQuestion({payload:{data, navigation, survey, index}
         editSurvey[index] = {
             title,answers,required,other,type:'dropdown'
         }
-        const newSur = yield {
-            title: survey.title,
-            data: editSurvey
-        }
+        const response = yield axios({
+            method: 'post',
+            url: 'http://tkb.miennam24h.vn/api/edit_survey',
+            headers: {
+              'Accept': 'application/json',
+              'Content-Type': 'application/json'
+            },
+            data: {
+                id: survey.id,
+                title: survey.title,
+                page_title: survey.page_title ? survey.page_title : 'Page title',
+                data: JSON.stringify(editSurvey)
+            }
+        })
+        const result = yield response.data
+        const newSur = yield result.success
+        newSur.data = JSON.parse(newSur.data) 
         yield put(editDropdownQuestionSuccess(newSur))
         yield navigation.goBack()
     } catch (error) {
@@ -319,10 +459,23 @@ export function* editTextQuestion({payload:{data, navigation, survey, index}}){
         editSurvey[index] = {
             title, type:'text', required
         }
-        const newSur = yield {
-            title: survey.title,
-            data: editSurvey
-        }
+        const response = yield axios({
+            method: 'post',
+            url: 'http://tkb.miennam24h.vn/api/edit_survey',
+            headers: {
+              'Accept': 'application/json',
+              'Content-Type': 'application/json'
+            },
+            data: {
+                id: survey.id,
+                title: survey.title,
+                page_title: survey.page_title ? survey.page_title : 'Page title',
+                data: JSON.stringify(editSurvey)
+            }
+        })
+        const result = yield response.data
+        const newSur = yield result.success
+        newSur.data = JSON.parse(newSur.data) 
         yield put(editTextQuestionSuccess(newSur))
         yield navigation.goBack()
     } catch (error) {
@@ -333,13 +486,26 @@ export function* editMultipleQuestion({payload:{data, navigation, survey, index}
     try {
         const {title,answers,required,other,multiSelected} = data
         const editSurvey = [...survey.data]
-        edit[index] = {
+        editSurvey[index] = {
             title,answers,required,other,multiSelected, type:'multiple'
         }
-        const newSur = yield {
-            title: survey.title,
-            data: editSurvey
-        }
+        const response = yield axios({
+            method: 'post',
+            url: 'http://tkb.miennam24h.vn/api/edit_survey',
+            headers: {
+              'Accept': 'application/json',
+              'Content-Type': 'application/json'
+            },
+            data: {
+                id: survey.id,
+                title: survey.title,
+                page_title: survey.page_title ? survey.page_title : 'Page title',
+                data: JSON.stringify(editSurvey)
+            }
+        })
+        const result = yield response.data
+        const newSur = yield result.success
+        newSur.data = JSON.parse(newSur.data) 
         yield put(editMultipleQuestionSuccess(newSur))
         yield navigation.goBack()
     } catch (error) {
