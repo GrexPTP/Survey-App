@@ -11,7 +11,7 @@ import MatrixRatingPage from './pages/MatrixRatingPage';
 import DropdownPage from './pages/DropdownPage';
 import TextPage from './pages/TextPage';
 import MultipleChoicePage from './pages/MultipleChoice';
-import QuestionBankPage from './pages/QuestionBankPage';
+import PreviewPage from './pages/PreviewPage';
 import ColumnPage from './pages/ColumnPage';
 import RowPage from './pages/RowPage';
 import {Provider} from 'react-redux'
@@ -45,7 +45,7 @@ const App = () => {
         }  />
         <Stack.Screen name='Columns' component={ColumnPage} />
         <Stack.Screen name='Rows' component={RowPage} />
-        <Stack.Screen name='Questions' component={QuestionBankPage} />
+        <Stack.Screen name='Preview' component={PreviewPage} />
       </Stack.Navigator>
       </NavigationContainer>
       </Provider>

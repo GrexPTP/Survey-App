@@ -1,4 +1,4 @@
-import React, {useState} from 'react'
+import React, {useState, useEffect} from 'react'
 import {View, StyleSheet, TouchableOpacity} from 'react-native'
 import {TextInput, Subheading, Button, Text, Switch} from 'react-native-paper'
 import {useSelector, useDispatch} from 'react-redux'
@@ -18,6 +18,12 @@ const MatrixRatingPage = ({route, navigation}) => {
     const dispatch = useDispatch()
     const editable = currentSelect ? true : false
     let {colForced, colWeighted, rowMultipled, rowMultiSelected} = {colForced:false, colWeighted:false, rowMultipled:false, rowMultiSelected:false}
+    const setRowMultipled = value => {
+        rowMultipled = value
+    }
+    const setRowMultiSelected = value => {
+        rowMultiSelected = value
+    }
     if (route.params) {
         if (route.params.colForced) {
             colForced = route.params.colForced 
@@ -25,10 +31,10 @@ const MatrixRatingPage = ({route, navigation}) => {
         if (route.params.colWeighted) {
             colWeighted = route.params.colWeighted 
         }
-        if (route.name.rowMultipled) {
-            rowMultipled = route.params.rowMultipled 
+        if (route.params.rowMultipled) {
+            rowMultipled = route.params.rowMultipled  
         }
-        if (route.name.rowMultiSelected) {
+        if (route.params.rowMultiSelected) {
             rowMultiSelected = route.params.rowMultiSelected
         }
     }
@@ -37,6 +43,28 @@ const MatrixRatingPage = ({route, navigation}) => {
     let weighted = colWeighted ? colWeighted : false
     let multipled = rowMultipled ? rowMultipled : false
     let multiSelected = rowMultiSelected ? rowMultiSelected : false
+    useEffect(() => {
+        if(currentSelect) {
+            rowMultipled = currentSelect.multipled
+            rowMultiSelected = currentSelect.multiSelected
+            console.log(currentSelect, rowMultipled, rowMultiSelected)
+        }
+    }, [])
+    // useEffect(() => {
+    //     const unsubscribe = navigation.addListener('focus', () => {
+    //         console.log(route.params)
+    //         if (route.name.rowMultipled) {
+    //             rowMultipled = route.params.rowMultipled
+    //             console.log('route',route.params.rowMultipled )
+    //             multipled = rowMultipled
+    //         }
+    //         if (route.name.rowMultiSelected) {
+    //             rowMultiSelected = route.params.rowMultiSelected
+    //             multiSelected = rowMultiSelected
+    //         }
+    //     });    
+    //     return unsubscribe;
+    //   }, [navigation]);
     return (
         <View style={{flex:1, padding:10, backgroundColor: 'white'}}>
             <Subheading style={styles.heading}>QUESTION TEXT</Subheading>
@@ -49,7 +77,9 @@ const MatrixRatingPage = ({route, navigation}) => {
                 setRow,
                 row,
                 rowMultipled,
-                rowMultiSelected
+                rowMultiSelected,
+                setRowMultiSelected,
+                setRowMultipled
             })}>
             <View style={{flexDirection:'row', justifyContent:'space-between', padding: 10, borderBottomColor:'black', borderBottomWidth:1}}>
                 <Text>Rows</Text>

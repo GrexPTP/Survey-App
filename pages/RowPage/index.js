@@ -14,13 +14,14 @@ const GeneratedInput = ({index, defaultVal}) => {
     )
 }
 const RowPage = ({route,navigation}) => {
-    const {setRow, setRowNum, row, rowMultipled,rowMultiSelected } = route.params
+    const {setRow, setRowNum, row, rowMultipled,rowMultiSelected, setRowMultipled,  setRowMultiSelected } = route.params
     const [answers, setAnswers] = useState(row)
     const [multipled, setMultipled] = useState(rowMultipled)
     const [multiSelected, setMultiSelected] = useState(rowMultiSelected)
     
     useEffect(() => {
         rowList = row
+        console.log(multipled, multiSelected)
     }, [])
     return (
         <View style={{flex:1, padding:10, backgroundColor: 'white'}}>
@@ -28,9 +29,9 @@ const RowPage = ({route,navigation}) => {
             <Picker
             selectedValue={multipled}
             style={{height: 50, width: '100%'}}
-            onValueChange={(itemValue, itemIndex) =>
-            {   setMultipled(itemValue)
-                }
+            onValueChange={(itemValue, itemIndex) =>{   
+                setMultipled(itemValue)
+            }
             }>
             <Picker.Item label="Multiple rows (rows labels)" value={true} />
             <Picker.Item label="Single row (no row labels)" value={false} />
@@ -65,7 +66,7 @@ const RowPage = ({route,navigation}) => {
                 onValueChange={(itemValue, itemIndex) =>
                 {
                     setMultiSelected(itemValue)     
-                    console.log(itemValue, multiSelected)           
+                             
                 }
                 }>
                 <Picker.Item label="Multi-select (checkboxes)" value={true} />
@@ -82,11 +83,11 @@ const RowPage = ({route,navigation}) => {
                 } else {
                     setRow(rowList)
                     setRowNum(rowList.length)
-                }
-                
+                }     
+                console.log(multipled, multiSelected)         
                 navigation.navigate('MatrixRating', {
-                    rowMultipled: !multipled,
-                    rowMultiSelected: !multiSelected
+                    rowMultipled: multipled,
+                    rowMultiSelected: multiSelected
                 })
             }}>SAVE</Button>
             </View>

@@ -10,11 +10,16 @@ const SurveysPage = ({navigation}) => {
     const [open, setOpen] = useState(false)
     const [visible, setVisible] = useState(false)
     const [title, setTitle] = useState('')
-    const surveys = useSelector(state => state.list.surveys)
+    const [query, setQuery] = useState('')
+    const filter = useSelector(state => state.list.surveys)
+    const [items, setItems] = useState([])
     const dispatch = useDispatch()
     useEffect(() => {
         dispatch(loadListStart())
     }, [])
+    useEffect(() => {
+      setItems(filter)
+    }, [filter])
     useEffect(() => {
       const unsubscribe = navigation.addListener('focus', () => {
         const isFocused = navigation.isFocused();
@@ -22,11 +27,27 @@ const SurveysPage = ({navigation}) => {
       });
       return unsubscribe;
     }, [navigation]);
+    const fillQuery = (query) => {
+      if (query != '') {
+        const newData = filter.filter(item => {      
+          const itemData = `${item.title.toUpperCase()} `;
+           const textData = query.toUpperCase(); 
+           return itemData.indexOf(textData) > -1 && query ;    
+        });
+        
+        setItems(newData) 
+      setQuery(query)
+      } else {
+        setItems(filter)
+        setQuery(query)
+      }
+      
+  }
     return(
         <View style={{flex:1, paddingTop:Constants.statusBarHeight}}>
             <Provider style={{backgroundColor: 'rgba(255,255,255,0.8)'}}>
-            <Searchbar placeholder="Search"/>
-            <FlatList style={{flex:1}}  data={surveys} renderItem={({item}) => <PreviewSurvey title={item.title} updated={item.updated_at} id={item.id} navigation={navigation}/>} keyExtractor={item =>item.id}/>
+            <Searchbar placeholder="Search" onChangeText={query => fillQuery(query) } value={query}/>
+            <FlatList style={{flex:1}}  data={items} renderItem={({item}) => <PreviewSurvey title={item.title} updated={item.updated_at} id={item.id} navigation={navigation}/>} keyExtractor={item =>item.id}/>
             <FAB
     style={styles.fab}
     small={false}

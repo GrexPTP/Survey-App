@@ -1,16 +1,22 @@
 import React, {useState} from 'react'
 import {useSelector, useDispatch} from 'react-redux'
 import {View, ScrollView, StyleSheet, Image} from 'react-native'
-import {Card, Title, Paragraph, FAB, Portal, Provider} from 'react-native-paper'
+import {Card, Title, Paragraph, FAB, Portal, Provider, Dialog, TextInput, Button} from 'react-native-paper'
 import ParagraphView from '../../components/ParagraphView'
 import ImageView from '../../components/ImageView'
 import TextView from '../../components/TextView'
 import MultipleChoiceView from '../../components/MutipleChoiceView'
 import DropdownView from '../../components/DropdownView'
 import MatrixRatingView from '../../components/MatrixRatingView'
+import {editSurveyStart} from '../../redux/reducer/surveyReducer/actions'
 const SurveyDetailPage = ({navigation}) => {
     const [open, setOpen] = useState(false)
-    const {title, data} = useSelector(state => state.survey.current)
+    const [titleVisible, setTitleVisible] = useState(false)
+    const [pageTitleVisible, setPageTitleVisible] = useState(false)
+    const survey = useSelector(state => state.survey.current)
+    const [editTitle, setEditTitle] = useState(survey.title)
+    const [editPageTitle, setEditPageTitle] = useState(survey.page_title)
+    const dispatch = useDispatch()
     return (
         <View style={{flex:1}}>
         <Provider>
@@ -49,8 +55,8 @@ const SurveyDetailPage = ({navigation}) => {
                 navigation.navigate('Multiple')
                 setOpen(false)
                } },
-               { icon: 'magnify', label:'Question Bank' ,onPress: () => {
-                navigation.navigate('Questions')
+               { icon: 'magnify', label:'Preview' ,onPress: () => {
+                navigation.navigate('Preview')
                 setOpen(false)
                } },
              ]}
@@ -62,12 +68,60 @@ const SurveyDetailPage = ({navigation}) => {
              }}
            />
          </Portal>
+         <Portal>
+         <Dialog
+             visible={titleVisible}
+             onDismiss={() => setTitleVisible(false)}>
+            <Dialog.Title style={{textAlign:'center'}}>Edit Title</Dialog.Title>
+            <Dialog.Content>
+              <Paragraph style={{textAlign:'center'}}>Enter new title</Paragraph>
+              <TextInput style={{backgroundColor:'white'}}
+        value={editTitle}
+        onChangeText={text => setEditTitle(text)}
+      />
+            </Dialog.Content>
+            <Dialog.Actions>
+            <Button onPress={() => setTitleVisible(false)}>Cancel</Button>
+              <Button onPress={() => {
+                dispatch(editSurveyStart({title: editTitle, page_title: editPageTitle ,survey}))
+                setTitleVisible(false)
+                }}>Done</Button>
+            </Dialog.Actions>
+          </Dialog>
+          </Portal>
+
+
+          <Portal>
+         <Dialog
+             visible={pageTitleVisible}
+             onDismiss={() => setPageTitleVisible(false)}>
+            <Dialog.Title style={{textAlign:'center'}}>Edit Page Title</Dialog.Title>
+            <Dialog.Content>
+              <Paragraph style={{textAlign:'center'}}>Enter new page title</Paragraph>
+              <TextInput style={{backgroundColor:'white'}}
+        value={editPageTitle}
+        onChangeText={text => setEditPageTitle(text)}
+      />
+            </Dialog.Content>
+            <Dialog.Actions>
+            <Button onPress={() => setPageTitleVisible(false)}>Cancel</Button>
+              <Button onPress={() => {
+                dispatch(editSurveyStart({title: editTitle, page_title: editPageTitle,survey}))
+                setPageTitleVisible(false)
+                }}>Done</Button>
+            </Dialog.Actions>
+          </Dialog>
+          </Portal>
         <ScrollView style={{flex:1, padding:10}}>
         <Card>
             <Card.Content>
-                <Title>{title}</Title>
-                <Paragraph>Page Title</Paragraph>
-                {data ? data.map((item, index) => {
+                <Title onPress={() => {
+                  setTitleVisible(true)
+                }}>{survey.title}</Title>
+                <Paragraph onPress={() => {
+                  setPageTitleVisible(true)
+                }}>{survey.page_title}</Paragraph>
+                {survey.data ? survey.data.map((item, index) => {
                   if (item.type == 'image') {
                     return <ImageView index={index} image={item.image} navigation={navigation}/>
                   } else if (item.type == 'paragraph') {

@@ -1,12 +1,12 @@
 import React, {useState} from 'react'
 import {View, StyleSheet, TouchableOpacity} from 'react-native'
 import {TextInput, Title, Checkbox, RadioButton, Text,Subheading} from 'react-native-paper'
-const MultipleChoiceView = ({title, multipled, answers, required, other, index, navigation}) => {
+const MultipleChoiceView = ({title, multipled, answers, required, other, index, navigation, disabled}) => {
     const [value, setValue] = useState(answers[0])
     const [selects, setSelects] = useState(Array(answers.length).fill(false))
     return (
         <View>
-            <TouchableOpacity onPress={() => {
+            <TouchableOpacity disabled={disabled} onPress={() => {
                 navigation.navigate('Multiple', {
                     index,
                     editable: true

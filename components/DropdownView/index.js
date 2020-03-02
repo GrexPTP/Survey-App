@@ -1,11 +1,11 @@
 import React, {useState} from 'react'
 import {View, Picker, TouchableOpacity} from 'react-native'
 import {Title, Subheading, TextInput} from 'react-native-paper'
-const DropdownView = ({title, answers, required, other, index, navigation}) => {
+const DropdownView = ({title, answers, required, other, index, navigation, disabled}) => {
     const [value, setValue] = useState(0)
     return (
         <View>
-            <TouchableOpacity onPress={() => {
+            <TouchableOpacity disabled={disabled} onPress={() => {
                 navigation.navigate('Dropdown',{
                     index,
                     editable: true

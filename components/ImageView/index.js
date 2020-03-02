@@ -1,9 +1,9 @@
 import React from 'react'
 import {View, Image, TouchableOpacity} from 'react-native'
-const ImageView = ({index, image, navigation}) => {
+const ImageView = ({index, image, navigation,disabled}) => {
     return(
         <View>
-            <TouchableOpacity onPress={() => {
+            <TouchableOpacity disabled={disabled} onPress={() => {
                 navigation.navigate('Image',{
                     index,
                     editable:true

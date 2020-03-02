@@ -69,22 +69,26 @@ export function* createSurvey({payload: {title, navigation}}){
         yield put(createSurveyFailure(err))
     }
 }
-export function* editSurvey({payload}){
+export function* editSurvey({payload:{title, page_title ,survey}}){
     try {
         const response = yield axios({
             method: 'post',
-            url: 'http://tkb.miennam24h.vn/api/load_surveys',
+            url: 'http://tkb.miennam24h.vn/api/edit_survey',
             headers: {
               'Accept': 'application/json',
               'Content-Type': 'application/json'
             },
             data: {
-                id: payload
+                id: survey.id,
+                title: title ? title : survey.title,
+                page_title: page_title ? page_title : survey.page_title,
+                data: JSON.stringify(survey.data)
             }
         })
         const result = yield response.data
-        const surveys = yield result.success
-        yield put(editSurveySuccess(surveys))
+        const newSur = yield result.success
+        newSur.data = JSON.parse(newSur.data) 
+        yield put(editSurveySuccess(newSur))
     } catch (err) {
         yield put(editSurveyFailure(err))
     }

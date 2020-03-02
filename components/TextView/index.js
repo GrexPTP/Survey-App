@@ -1,10 +1,10 @@
 import React from 'react'
 import {View, TouchableOpacity} from 'react-native'
 import {TextInput, Title} from 'react-native-paper'
-const TextView = ({title, required, index, navigation}) => {
+const TextView = ({title, required, index, navigation,disabled}) => {
     return (
         <View>
-            <TouchableOpacity onPress={() => {
+            <TouchableOpacity disabled={disabled} onPress={() => {
                 navigation.navigate('Text',{
                     index,
                     editable: true
