@@ -63,7 +63,9 @@ export function* createSurvey({payload: {title, navigation}}){
             }
         })
         const result = yield response.data
-        yield put(createSurveySuccess(result.success))
+        const newSur = yield result.success
+        newSur.data = JSON.parse(newSur.data) 
+        yield put(createSurveySuccess(newSur))
         yield navigation.navigate('SurveyDetail')
     } catch (err) {
         yield put(createSurveyFailure(err))
